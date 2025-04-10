@@ -18,7 +18,7 @@ h = 4.135e-15 #Planck constant (eV*s)
 e2 = (hbar * c) / 137 #eV*cm
 
 
-data_NIST = np.loadtxt('/Users/ggrell/test/NIST_energies_qrst_wxyz.txt')
+data_NIST = np.loadtxt('/RGQ/NIST_energies_qrst_wxyz.txt')
 columns = ['Z', 'q', 'r', 's', 't', 'w','x','y','z']
 index = ["C", "N", "O", "Ne", "Mg", "Si", "S", "Ar", "Ca", "Cr", "Mn", "Fe", "Ni"]
 df = pd.DataFrame(data_NIST,index=index, columns=columns)
@@ -62,7 +62,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     #H = photoionization cross sections * ionizing radiation
     egrid_Li = []
     pi_sig_Li = []
-    data_pi_Li = np.loadtxt('/Users/ggrell/test/fac_files/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_Li = np.loadtxt('/RGQ/facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
     
     for i in range(len(data_pi_Li)):
         egrid_Li.append(data_pi_Li[i][0])
@@ -74,7 +74,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
         
     egrid_He = []
     pi_sig_He = []
-    data_pi_He = np.loadtxt('/Users/ggrell/test/fac_files/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_He = np.loadtxt('/RGQ/facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
 
     for i in range(len(data_pi_He)):
         egrid_He.append(data_pi_He[i][0])
@@ -150,7 +150,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     #____
     #A
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('/Users/ggrell/test/fac_files/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
+    data_A = np.loadtxt('/RGQ/facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
@@ -235,7 +235,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele):
     gamma = 1
     egrid_He = []
     pi_sig_He = []
-    data_pi_He = np.loadtxt('/Users/ggrell/test/fac_files/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_He = np.loadtxt('/RGQ/facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
 
     for i in range(len(data_pi_He)):
         egrid_He.append(data_pi_He[i][0])
@@ -247,7 +247,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele):
     
     #_____
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('/Users/ggrell/test/fac_files/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
+    data_A = np.loadtxt('/RGQ/facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
@@ -261,7 +261,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele):
     NHE_space = np.logspace(15,22,30)
     vel_space = np.linspace(50,400,5)
 
-    qrw_ratio = np.load('/Users/ggrell/test/q_r_w_ratio_14.npy')
+    qrw_ratio = np.load('/RGQ/q_r_w_ratio_14.npy')
     L = interpn((NLI_space,NHE_space,vel_space),qrw_ratio,[N_li,N_he,v])
     
     #____
@@ -327,7 +327,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     #H = photoionization cross sections * ionizing radiation
     egrid_Li = []
     pi_sig_Li = []
-    data_pi_Li = np.loadtxt('/Users/ggrell/test/fac_files/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_Li = np.loadtxt('/RGQ/facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
     
     for i in range(len(data_pi_Li)):
         egrid_Li.append(data_pi_Li[i][0])
@@ -339,7 +339,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing):
         
     egrid_He = []
     pi_sig_He = []
-    data_pi_He = np.loadtxt('/Users/ggrell/test/fac_files/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_He = np.loadtxt('/RGQ/facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
 
     for i in range(len(data_pi_He)):
         egrid_He.append(data_pi_He[i][0])
@@ -414,7 +414,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     #____
     #A
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('/Users/ggrell/test/fac_files/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
+    data_A = np.loadtxt('/RGQ/facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
