@@ -1,8 +1,6 @@
 import sys
 import numpy as np
 
-
-#FIX TO GET LINE STRENGTHS 
 def get_ratios(Z, phi):
 
     F = 0
@@ -21,7 +19,7 @@ def get_ratios(Z, phi):
     x_to_zline = 0
     y_to_zline = 0
 
-    target = open('/RGQ/facfiles/recomb_ratios/'+Z+'_10.0_8.0_0.0-he.ln','r')
+    target = open('/facfiles/recomb_ratios/'+Z+'_10.0_8.0_0.0-he.ln','r')
     all_lines = target.readlines()
     for line in all_lines:
         line_dat = line.split()
@@ -96,7 +94,7 @@ def get_params_He(Z, ln):
     xz_A = 0
     yz_A = 0
     
-    target = open("/RGQ/facfiles/rates/"+Z+"02a.tr",'r')
+    target = open("/facfiles/rates/"+Z+"02a.tr",'r')
     all_lines = target.readlines()
     for line in all_lines:
         line_dat = line.split()
@@ -172,7 +170,7 @@ def get_params_Li(Z,ln):
     t_E = 0
     t_osc = 0
     t_A = 0
-    target = open("/RGQ/facfiles/rates/"+Z+"03a.tr",'r')
+    target = open("/facfiles/rates/"+Z+"03a.tr",'r')
     all_lines = target.readlines()
     for line in all_lines:
         line_dat = line.split()
@@ -230,7 +228,7 @@ def get_ai_rates(Z, ln):
     s_ai = 0
     t_ai = 0
     
-    target = open("/RGQ/facfiles/rates/"+Z+"03a.ai",'r')
+    target = open("/facfiles/rates/"+Z+"03a.ai",'r')
     all_lines = target.readlines()
     for line in all_lines:
         line_dat = line.split()
@@ -274,7 +272,7 @@ def get_rates(Z):
     c_yz = 0
     c_zy = 0
 
-    target = open('/RGQ/facfiles/ce_rates/'+Z+'_10.0_8.0_0.0.rt','r')
+    target = open('/facfiles/ce_rates/'+Z+'_10.0_8.0_0.0.rt','r')
     all_lines = target.readlines()
     for line in all_lines:
         line_dat = line.split()
