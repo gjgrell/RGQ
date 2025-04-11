@@ -15,10 +15,11 @@ The input parameters for the ratio calculations are as follows:
 - v - turbulent velocity ($cm$ $s^{-1}$)
 - $\phi_{UV}$ - UV photoexcitation rate ($s^{-1}$)
 - $n_{e}$ - electron density ($cm^{-3}$)
-- mixing factor 
+- mixing factor
+- gamma (power law exponent) 
 
 The following commands calculate the $\mathcal{R}$, $\mathcal{G}$, and $\mathcal{Q}$ ratios:
 
-- $\mathcal{R}$ = R_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing)
-- $\mathcal{G}$ = G_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing)
-- $\mathcal{Q}$ = Q_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$)
+- $\mathcal{R}$ = R_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing, gamma)
+- $\mathcal{G}$ = G_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing, gamma)
+- $\mathcal{Q}$ = Q_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, gamma)
