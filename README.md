@@ -1,5 +1,5 @@
 # RGQ
-We model the effect of increased lithium-like presence on the line ratios R = z/(x + y), G = (x+y+z)/w, and Q = (q+r)/w for astrophysically important ions in a photoionized plasma, by solving the steady-state rate equations as a function of Li-like column density
+We model the effect of increased lithium-like presence on the line ratios $\mathcal{R}$ = z / (x + y), $\mathcal{G}$ = (x+y+z) / w, and $\mathcal{Q}$ = (q+r) / w for astrophysically important ions in a photoionized plasma, by solving the steady-state rate equations as a function of Li-like column density
 
 ## 1. Download
 Download the latest source packages from
@@ -19,6 +19,6 @@ The input parameters for the ratio calculations are as follows:
 
 The following commands calculate the $\mathcal{R}$, $\mathcal{G}$, and $\mathcal{Q}$ ratios:
 
-- $\mathcal{R}$ = R_analytic('Z', $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing)
-- $\mathcal{G}$ = G_analytic('Z', $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing)
-- $\mathcal{Q}$ = Q_analytic('Z', $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$)
+- $\mathcal{R}$ = R_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing)
+- $\mathcal{G}$ = G_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing)
+- $\mathcal{Q}$ = Q_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$)
