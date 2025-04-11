@@ -8,13 +8,17 @@ gunzip, and extract it.
 
 ## 2. Usage
 The input parameters for the ratio calculations are as follows:
-\begin{enumerate}
-    \item Z - atomic number
-    \item $N_{Li}$ - lithium-like column density (cm$^{-2}$)
-    \item $N_{He}$ - helium-like column density (cm$^{-2}$)
-    \item v - turbulent velocity (cm s$^{-1}$)
-    \item $\phi_{UV}$ - UV photoexcitation rate (s$^{-1}$)
-    \item $n_{e} - electron density (cm$^{-3}$)
-    \item mixing
-\end{enumerate}
 
+- Z - atomic symbol (string)
+- $N_{Li}$ - lithium-like column density ($cm^{-2}$)
+- $N_{He}$ - helium-like column density ($cm^{-2}$)
+- v - turbulent velocity ($cm$ $s^{-1}$)
+- $\phi_{UV}$ - UV photoexcitation rate ($s^{-1}$)
+- $n_{e}$ - electron density ($cm^{-3}$)
+- mixing factor 
+
+The following commands calculate the $\mathcal{R}$, $\mathcal{G}$, and $\mathcal{Q}$ ratios:
+
+- $\mathcal{R}$ = R_analytic('Z', $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing)
+- $\mathcal{G}$ = G_analytic('Z', $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing)
+- $\mathcal{Q}$ = Q_analytic('Z', $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$)
