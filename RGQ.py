@@ -33,7 +33,7 @@ def voigt(x, x0, sigma, gamma):
     return np.real(special.wofz((x - x0 + 1j*gamma)/sigma/np.sqrt(2))) / sigma / np.sqrt(2*np.pi)
 
 
-def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
+def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     
     #____
     #Relevant ratios F, B, K for analytic R ratio calculation
@@ -49,9 +49,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     
     #____
     #H_He, H_Li
-    
-    gamma = 1
-    
+        
     #H = photoionization cross sections * ionizing radiation
     egrid_Li = []
     pi_sig_Li = []
@@ -217,11 +215,10 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     return R
 
     
-def Q_analytic(Z, N_li, N_he, v, phi, nele):
+def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
         
     #____
     #H_He
-    gamma = 1
     egrid_He = []
     pi_sig_He = []
     data_pi_He = np.loadtxt('facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
@@ -279,7 +276,6 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele):
     
     #Assumed parameters
     psi_0 = 1 
-    gamma = 1
     E_0 = 1 #eV
 
     psi_w = psi_0 * (w_centroid_energy / E_0)**(-1 * gamma)
@@ -288,7 +284,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele):
     
     return Q
     
-def G_analytic(Z, N_li, N_he, v, phi, nele, mixing):
+def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     
     #____
     #F, B, Btilde, K, R0
@@ -305,10 +301,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     R_0 = ratios[7]
     
     #____
-    #H_He, H_Li
-
-    gamma = 1
-    
+    #H_He, H_Li    
     #H = photoionization cross sections * ionizing radiation
     egrid_Li = []
     pi_sig_Li = []
