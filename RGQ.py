@@ -23,11 +23,6 @@ columns = ['Z', 'q', 'r', 's', 't', 'w','x','y','z']
 index = ["C", "N", "O", "Ne", "Mg", "Si", "S", "Ar", "Ca", "Cr", "Mn", "Fe", "Ni"]
 df = pd.DataFrame(data_NIST,index=index, columns=columns)
 
-#Z = str(sys.argv[1])
-#NLi = float(sys.argv[2])
-#NHe = float(sys.argv[3])
-#vel = int(sys.argv[4])
-
 
 # Power law function
 def power_law(x, a, b):
@@ -41,8 +36,6 @@ def voigt(x, x0, sigma, gamma):
 def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     
     #____
-    #F, B, Btilde, K, R0
-    
     #Relevant ratios F, B, K for analytic R ratio calculation
     ratios = get_ratios(Z, phi)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
@@ -179,7 +172,6 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
 
     dphi_w = (1 - np.exp(-1*tau_w))
     phi_w = simps(dphi_w, e_grid)
-    #print(phi_w)
     
     #Assumed parameters
     psi_0 = 1 
@@ -222,10 +214,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
 
     R = (R_0 + S/B) / (((Btilde / B) * (1 + (phi_tilde / phi_c) + (n_e / n_c))) + S * Xtilde / (B * Azg))
     
-    #print("R = " +str(R))
     return R
-
-#R_analytic(Z, NLi, NHe, vel, phi, nele, mixing)
 
     
 def Q_analytic(Z, N_li, N_he, v, phi, nele):
@@ -296,12 +285,8 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele):
     psi_w = psi_0 * (w_centroid_energy / E_0)**(-1 * gamma)
     
     Q = L / (1 + (A * H_He * N_he * psi_0 / (phi_w * psi_w)))
-    #print("Q = "+str(float(Q)))
     
     return Q
-    
-#Q_analytic(Z, NLi, NHe, vel)
-
     
 def G_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     
@@ -487,7 +472,5 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     
     G = ((1 + F - B + S) * ((Azg + Xtilde) / (Azg + X)) + Btilde) / (K + (psi_w * phi_w * K / (N_he * H_He * A)))
     
-    #print("G = "+str(G))
     return G
     
-#G_analytic(Z, NLi, NHe, vel, phi, nele, mixing)
