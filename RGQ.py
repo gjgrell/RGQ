@@ -55,7 +55,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     #H = photoionization cross sections * ionizing radiation
     egrid_Li = []
     pi_sig_Li = []
-    data_pi_Li = np.loadtxt('/facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_Li = np.loadtxt('~/facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
     
     for i in range(len(data_pi_Li)):
         egrid_Li.append(data_pi_Li[i][0])
@@ -67,7 +67,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
         
     egrid_He = []
     pi_sig_He = []
-    data_pi_He = np.loadtxt('/facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_He = np.loadtxt('~/facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
 
     for i in range(len(data_pi_He)):
         egrid_He.append(data_pi_He[i][0])
@@ -143,7 +143,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     #____
     #A
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('/facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
+    data_A = np.loadtxt('~/facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
@@ -224,7 +224,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele):
     gamma = 1
     egrid_He = []
     pi_sig_He = []
-    data_pi_He = np.loadtxt('/facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_He = np.loadtxt('~/facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
 
     for i in range(len(data_pi_He)):
         egrid_He.append(data_pi_He[i][0])
@@ -236,7 +236,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele):
     
     #_____
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('/facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
+    data_A = np.loadtxt('~/facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
@@ -312,7 +312,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     #H = photoionization cross sections * ionizing radiation
     egrid_Li = []
     pi_sig_Li = []
-    data_pi_Li = np.loadtxt('/facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_Li = np.loadtxt('~/facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
     
     for i in range(len(data_pi_Li)):
         egrid_Li.append(data_pi_Li[i][0])
@@ -324,7 +324,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing):
         
     egrid_He = []
     pi_sig_He = []
-    data_pi_He = np.loadtxt('/facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_He = np.loadtxt('~/facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
 
     for i in range(len(data_pi_He)):
         egrid_He.append(data_pi_He[i][0])
@@ -399,7 +399,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing):
     #____
     #A
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('/facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
+    data_A = np.loadtxt('~/facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
