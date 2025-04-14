@@ -1,5 +1,5 @@
 # RGQ
-We model the effect of increased lithium-like presence on the line ratios $\mathcal{R}$ = z / (x + y), $\mathcal{G}$ = (x+y+z) / w, and $\mathcal{Q}$ = (q+r) / w for astrophysically important ions in a photoionized plasma, by solving the steady-state rate equations as a function of Li-like column density
+We model the effect of increased lithium-like presence on the line ratios $\mathcal{R}$ = $z$ / ($x$ + $y$), $\mathcal{G}$ = ($x$ + $y$ + $z$) / $w$, and $\mathcal{Q}$ = ($q$ + $r$) / $w$ for astrophysically important ions in a photoionized plasma, by solving the steady-state rate equations as a function of Li-like column density
 
 ## 1. Download
 Download the latest source packages from
