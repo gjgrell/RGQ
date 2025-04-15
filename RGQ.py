@@ -134,8 +134,8 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     #Probability distribution for photon absorption
     dPy = phi_y * (np.exp(-1 * sigma_abs * N_li))
     dPx = phi_x * (np.exp(-1 * sigma_abs * N_li))
-    P_rad_y = mixing * (1 - simps(dPy, e_grid) * (1 - (fac_omega_s + fac_omega_t)))
-    P_rad_x = mixing * (1 - simps(dPx, e_grid) * (1 - (fac_omega_s + fac_omega_t)))
+    P_rad_y = mixing * (1 - simps(dPy, e_grid)) * (1 - (fac_omega_s + fac_omega_t))
+    P_rad_x = mixing * (1 - simps(dPx, e_grid)) * (1 - (fac_omega_s + fac_omega_t)) 
     
     
     #____
