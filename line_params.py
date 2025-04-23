@@ -19,7 +19,7 @@ def get_ratios(Z, phi):
     x_to_zline = 0
     y_to_zline = 0
 
-    target = open('facfiles/recomb_ratios/'+Z+'_10.0_8.0_0.0-he.ln','r')
+    target = open('facfiles/recomb_ratios/'+Z+'_10.0_6.0_0.0-he.ln','r')
     all_lines = target.readlines()
     for line in all_lines:
         line_dat = line.split()
@@ -272,7 +272,7 @@ def get_rates(Z):
     c_yz = 0
     c_zy = 0
 
-    target = open('facfiles/ce_rates/'+Z+'_10.0_8.0_0.0.rt','r')
+    target = open('facfiles/ce_rates/'+Z+'_10.0_6.0_0.0.rt','r')
     all_lines = target.readlines()
     for line in all_lines:
         line_dat = line.split()
