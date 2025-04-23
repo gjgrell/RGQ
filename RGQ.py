@@ -141,7 +141,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     #____
     #A
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
+    data_A = np.loadtxt('facfiles/A_calc/'+Z+'_10.0_6.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
@@ -233,7 +233,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
     
     #_____
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
+    data_A = np.loadtxt('facfiles/A_calc/'+Z+'_10.0_6.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
@@ -392,7 +392,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     #____
     #A
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('facfiles/A_calc/'+Z+'_10.0_8.0_0.0-he.ln')
+    data_A = np.loadtxt('facfiles/A_calc/'+Z+'_10.0_6.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
