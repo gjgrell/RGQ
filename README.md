@@ -16,7 +16,7 @@ The input parameters for the ratio calculations are as follows:
 - $\phi_{UV}$ - UV photoexcitation rate ($s^{-1}$)
 - $n_{e}$ - electron density ($cm^{-3}$)
 - mixing factor
-- gamma (power law exponent) 
+- gamma (energy power law spectral index) 
 
 The following commands calculate the $\mathcal{R}$, $\mathcal{G}$, and $\mathcal{Q}$ ratios:
 
