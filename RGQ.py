@@ -48,7 +48,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     R_0 = ratios[7]
     
     #____
-    #H_He, H_Li
+    #R_pi_He, R_pi_Li
         
     #H = photoionization cross sections * ionizing radiation
     egrid_Li = []
@@ -60,8 +60,8 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
         pi_sig_Li.append(data_pi_Li[i][2])
 
     y_Li = power_law(egrid_Li, 1, gamma)
-    cs_Li = y_Li * pi_sig_Li
-    H_Li = 1e-20 * simps(cs_Li, egrid_Li) #FAC output units: 1e20 cm-2
+    cs_Li = y_Li * pi_sig_Li #photoionization cross section
+    R_pi_Li = 1e-20 * simps(cs_Li, egrid_Li) #ionization rate [FAC output units: 1e20 cm-2]
         
     egrid_He = []
     pi_sig_He = []
@@ -73,7 +73,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
 
     y_He = power_law(egrid_He, 1, gamma)
     cs_He = y_He * pi_sig_He
-    H_He = 1e-20 * simps(cs_He, egrid_He)
+    R_pi_He = 1e-20 * simps(cs_He, egrid_He)
     
     #____
     #P_RAD, P_ESC
@@ -151,34 +151,8 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     #____
     #S
     
-    #He-like w line
-    He_w_params = get_params_He(Z, 'w')
-    w_centroid_energy = df.loc[Z,'w']
-    fac_w_osc_strength = He_w_params[1] 
-    w_lorentz_gamma = He_w_params[2] * hbar #eV
-
-    #Energy distribution
-    e_w_lower = (w_centroid_energy - 300)
-    e_w_upper = (w_centroid_energy + 300)
-    e_grid_w = np.linspace(e_w_lower, e_w_upper, 100000) 
-
-    #Line profile
-    sigma_em_w = (v * 1e5 / c) * w_centroid_energy
-    voigt_w = voigt(e_grid_w, w_centroid_energy, sigma_em_w, w_lorentz_gamma)
-    sigma_w = h * (np.pi * e2 / (m_e * c)) * fac_w_osc_strength * voigt_w
-    tau_w = sigma_w * N_he
-
-    dphi_w = (1 - np.exp(-1*tau_w))
-    phi_w = simps(dphi_w, e_grid)
-    
-    #Assumed parameters
-    psi_0 = 1 
-    E_0 = 1 #eV
-
-    psi_w = psi_0 * (w_centroid_energy / E_0)**(-1 * gamma)
-    
     #Ionization rate parameter
-    S = N_li * H_Li * K / (A * N_he * H_He)
+    S = N_li * R_pi_Li * K / (A * N_he * R_pi_He)
     
     #_____
     #R
@@ -248,7 +222,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
     vel_space = np.linspace(50,400,5)
 
     qrw_ratio = np.load('q_r_w_ratio_'+Z+'.npy')
-    L = interpn((NLI_space,NHE_space,vel_space),qrw_ratio,[N_li,N_he,v])
+    Y = interpn((NLI_space,NHE_space,vel_space),qrw_ratio,[N_li,N_he,v])
     
     #____
     #Q, S
@@ -256,7 +230,6 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
     #He-like w line
     He_w_params = get_params_He(Z, 'w')
     w_centroid_energy = df.loc[Z,'w']
-    #w_centroid_energy = He_w_params[0]
     fac_w_osc_strength = He_w_params[1] 
     w_lorentz_gamma = He_w_params[2] * hbar #eV
 
@@ -271,16 +244,16 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
     sigma_w = h * (np.pi * e2 / (m_e * c)) * fac_w_osc_strength * voigt_w
     tau_w = sigma_w * N_he
 
-    dphi_w = (1 - np.exp(-1*tau_w))
-    phi_w = simps(dphi_w, e_grid_w)
+    dL_w = (1 - np.exp(-1*tau_w))
+    L_w = simps(dL_w, e_grid)
     
     #Assumed parameters
-    psi_0 = 1 
+    I_0 = 1 
     E_0 = 1 #eV
 
-    psi_w = psi_0 * (w_centroid_energy / E_0)**(-1 * gamma)
+    I_w = I_0 * (w_centroid_energy / E_0)**(-1 * gamma)
     
-    Q = L / (1 + (A * H_He * N_he * psi_0 / (phi_w * psi_w)))
+    Q = L / (1 + (A * H_He * N_he * I_0 / (L_w * I_w)))
     
     return Q
     
@@ -301,8 +274,8 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     R_0 = ratios[7]
     
     #____
-    #H_He, H_Li    
-    #H = photoionization cross sections * ionizing radiation
+    #R_pi_Li, R_pi_He    
+    #R_pi = photoionization cross sections * ionizing radiation
     egrid_Li = []
     pi_sig_Li = []
     data_pi_Li = np.loadtxt('facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
@@ -313,7 +286,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
 
     y_Li = power_law(egrid_Li, 1, gamma)
     cs_Li = y_Li * pi_sig_Li
-    H_Li = 1e-20 * simps(cs_Li, egrid_Li) #FAC output units: 1e20 cm-2
+    R_pi_Li = 1e-20 * simps(cs_Li, egrid_Li) #FAC output units: 1e20 cm-2
         
     egrid_He = []
     pi_sig_He = []
@@ -325,7 +298,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
 
     y_He = power_law(egrid_He, 1, gamma)
     cs_He = y_He * pi_sig_He
-    H_He = 1e-20 * simps(cs_He, egrid_He)
+    R_pi_He = 1e-20 * simps(cs_He, egrid_He)
     
     #____
     #P_RAD, P_ESC
@@ -407,7 +380,6 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     #He-like w line
     He_w_params = get_params_He(Z, 'w')
     w_centroid_energy = df.loc[Z,'w']
-    #w_centroid_energy = He_w_params[0]
     fac_w_osc_strength = He_w_params[1] 
     w_lorentz_gamma = He_w_params[2] * hbar #eV
 
@@ -422,17 +394,16 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     sigma_w = h * (np.pi * e2 / (m_e * c)) * fac_w_osc_strength * voigt_w
     tau_w = sigma_w * N_he
 
-    dphi_w = (1 - np.exp(-1*tau_w))
-    phi_w = simps(dphi_w, e_grid)
-    #print(phi_w)
+    dL_w = (1 - np.exp(-1*tau_w))
+    L_w = simps(dL_w, e_grid)
     
     #Assumed parameters
-    psi_0 = 1 
+    I_0 = 1 
     E_0 = 1 #eV
 
-    psi_w = psi_0 * (w_centroid_energy / E_0)**(-1 * gamma)
+    I_w = I_0 * (w_centroid_energy / E_0)**(-1 * gamma)
     
-    S = N_li * H_Li * K / (A * N_he * H_He)
+    S = N_li * R_pi_Li * K / (A * N_he * R_pi_He)
     
     #_____
     #G
@@ -463,7 +434,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     X = B * (phi_UV + n_e * C_zi[1])    
     Xtilde = Btilde * (phi_tilde + n_e * C_zi[1])
     
-    G = ((1 + F - B + S) * ((Azg + Xtilde) / (Azg + X)) + Btilde) / (K + (psi_w * phi_w * K / (N_he * H_He * A)))
+    G = ((1 + F - B + S) * ((Azg + Xtilde) / (Azg + X)) + Btilde) / (K + (I_w * L_w * K / (N_he * R_pi_He * A)))
     
     return G
     
