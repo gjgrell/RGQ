@@ -253,7 +253,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
 
     I_w = I_0 * (w_centroid_energy / E_0)**(-1 * gamma)
     
-    Q = L / (1 + (A * H_He * N_he * I_0 / (L_w * I_w)))
+    Q = Y / (1 + (A * H_He * N_he * I_0 / (L_w * I_w)))
     
     return Q
     
