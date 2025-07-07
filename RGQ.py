@@ -245,7 +245,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
     tau_w = sigma_w * N_he
 
     dL_w = (1 - np.exp(-1*tau_w))
-    L_w = simps(dL_w, e_grid)
+    L_w = simps(dL_w, e_grid_w)
     
     #Assumed parameters
     I_0 = 1 
@@ -395,7 +395,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     tau_w = sigma_w * N_he
 
     dL_w = (1 - np.exp(-1*tau_w))
-    L_w = simps(dL_w, e_grid)
+    L_w = simps(dL_w, e_grid_w)
     
     #Assumed parameters
     I_0 = 1 
