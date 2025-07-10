@@ -1,11 +1,13 @@
 import numpy as np
-from scipy.integrate import simps
+from scipy.integrate import simpson
 from scipy import interpolate
 from scipy.interpolate import interpn
 from scipy import special
 import sys
 import pandas as pd
+from scipy.optimize import minimize
 
+from calc_Z_emit_ratio import *
 from line_params import *
 
 #Constants
@@ -22,6 +24,12 @@ data_NIST = np.loadtxt('NIST_energies_qrst_wxyz.txt')
 columns = ['Z', 'q', 'r', 's', 't', 'w','x','y','z']
 index = ["C", "N", "O", "Ne", "Mg", "Si", "S", "Ar", "Ca", "Cr", "Mn", "Fe", "Ni"]
 df = pd.DataFrame(data_NIST,index=index, columns=columns)
+
+
+#get the number for the element
+def get_number(Z):
+    element_num= {"C":6,"N":7,"O":8,"Ne":10,"Mg":12,"Si":14,"S":16,"Ar":18,"Ca":20,"Cr":24,"Mn":25,"Fe":26,"Ni":28}
+    return element_num[Z]
 
 
 # Power law function
@@ -61,7 +69,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
 
     y_Li = power_law(egrid_Li, 1, gamma)
     cs_Li = y_Li * pi_sig_Li #photoionization cross section
-    R_pi_Li = 1e-20 * simps(cs_Li, egrid_Li) #ionization rate [FAC output units: 1e20 cm-2]
+    R_pi_Li = 1e-20 * simpson(cs_Li, x=egrid_Li) #ionization rate [FAC output units: 1e20 cm-2]
         
     egrid_He = []
     pi_sig_He = []
@@ -73,7 +81,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
 
     y_He = power_law(egrid_He, 1, gamma)
     cs_He = y_He * pi_sig_He
-    R_pi_He = 1e-20 * simps(cs_He, egrid_He)
+    R_pi_He = 1e-20 * simpson(cs_He, x=egrid_He)
     
     #____
     #P_RAD, P_ESC
@@ -134,8 +142,8 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     #Probability distribution for photon absorption
     dPy = phi_y * (np.exp(-1 * sigma_abs * N_li))
     dPx = phi_x * (np.exp(-1 * sigma_abs * N_li))
-    P_rad_y = mixing * (1 - simps(dPy, e_grid)) * (1 - (fac_omega_s + fac_omega_t))
-    P_rad_x = mixing * (1 - simps(dPx, e_grid)) * (1 - (fac_omega_s + fac_omega_t)) 
+    P_rad_y = mixing * (1 - simpson(dPy, x = e_grid)) * (1 - (fac_omega_s + fac_omega_t))
+    P_rad_x = mixing * (1 - simpson(dPx, x=e_grid)) * (1 - (fac_omega_s + fac_omega_t)) 
     
     
     #____
@@ -203,7 +211,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
 
     y_He = power_law(egrid_He, 1, gamma)
     cs_He = y_He * pi_sig_He
-    H_He = 1e-20 * simps(cs_He, egrid_He)
+    H_He = 1e-20 * simpson(cs_He, x=egrid_He)
     
     #_____
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
@@ -217,12 +225,12 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
     #_____
     #L
     
-    NLI_space = np.logspace(12,20,30)
-    NHE_space = np.logspace(15,22,30)
-    vel_space = np.linspace(50,400,5)
+    # NLI_space = np.logspace(12,20,30)
+    # NHE_space = np.logspace(15,22,30)
+    # vel_space = np.linspace(50,400,5)
 
-    qrw_ratio = np.load('q_r_w_ratio_'+Z+'.npy')
-    Y = interpn((NLI_space,NHE_space,vel_space),qrw_ratio,[N_li,N_he,v])
+    NLI_space,NHE_space,vel_space,qrw_ratio = get_q_r_w_ratio(get_number(Z))
+    Y = interpn((NLI_space,NHE_space,vel_space),qrw_ratio,[N_li,N_he,v])[0]
     
     #____
     #Q, S
@@ -245,7 +253,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
     tau_w = sigma_w * N_he
 
     dL_w = (1 - np.exp(-1*tau_w))
-    L_w = simps(dL_w, e_grid_w)
+    L_w = simpson(dL_w, x=e_grid_w)
     
     #Assumed parameters
     I_0 = 1 
@@ -254,7 +262,6 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
     I_w = I_0 * (w_centroid_energy / E_0)**(-1 * gamma)
     
     Q = Y / (1 + (A * H_He * N_he * I_0 / (L_w * I_w)))
-    
     return Q
     
 def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
@@ -286,7 +293,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
 
     y_Li = power_law(egrid_Li, 1, gamma)
     cs_Li = y_Li * pi_sig_Li
-    R_pi_Li = 1e-20 * simps(cs_Li, egrid_Li) #FAC output units: 1e20 cm-2
+    R_pi_Li = 1e-20 * simpson(cs_Li, x=egrid_Li) #FAC output units: 1e20 cm-2
         
     egrid_He = []
     pi_sig_He = []
@@ -298,7 +305,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
 
     y_He = power_law(egrid_He, 1, gamma)
     cs_He = y_He * pi_sig_He
-    R_pi_He = 1e-20 * simps(cs_He, egrid_He)
+    R_pi_He = 1e-20 * simpson(cs_He, x=egrid_He)
     
     #____
     #P_RAD, P_ESC
@@ -359,8 +366,8 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     #Probability distribution for photon absorption
     dPy = phi_y * (np.exp(-1 * sigma_abs * N_li)) 
     dPx = phi_x * (np.exp(-1 * sigma_abs * N_li))
-    P_rad_y = mixing * ((1 - simps(dPy, e_grid)) * (1 - (fac_omega_s + fac_omega_t)))
-    P_rad_x = mixing * (1 - simps(dPx, e_grid) * (1 - (fac_omega_s + fac_omega_t)))
+    P_rad_y = mixing * ((1 - simpson(dPy, x=e_grid)) * (1 - (fac_omega_s + fac_omega_t)))
+    P_rad_x = mixing * (1 - simpson(dPx, x=e_grid) * (1 - (fac_omega_s + fac_omega_t)))
 
     #____
     #A
@@ -395,7 +402,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     tau_w = sigma_w * N_he
 
     dL_w = (1 - np.exp(-1*tau_w))
-    L_w = simps(dL_w, e_grid_w)
+    L_w = simpson(dL_w, x=e_grid_w)
     
     #Assumed parameters
     I_0 = 1 
@@ -438,3 +445,31 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     
     return G
     
+
+
+def get_RGQ(Z, N_li, N_he, v, phi, nele, mixing, gamma):
+    R = R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma)
+    # print(R)
+    G = G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma)
+    # print(G)
+    Q = Q_analytic(Z, N_li, N_he, v, phi, nele, gamma)
+    # print(Q)
+    return np.array([R,G,Q])
+
+
+def chi_sq_RGQ(NHe,NLi,vel,mixing,gamma,Z,RGQ_meas,RGQ_meas_err):
+    RGQ_model = get_RGQ(Z,NLi,NHe,vel,0,1,mixing,gamma)
+    chi_arr = ((RGQ_meas-RGQ_model)**2)/RGQ_meas_err**2
+    return np.sum(chi_arr)
+    
+def chi_for_min(x,mixing,gamma,Z,RGQ_meas,RGQ_meas_err):
+    print(x)
+    NHe = 10**x[0]
+    NLi = 10**x[1]
+    chi = chi_sq_RGQ(NHe,NLi,x[2],mixing,gamma,Z,RGQ_meas,RGQ_meas_err)
+    print(chi)
+    return chi
+
+def solve_RGQ(Z,mixing,gamma,RGQ_meas,RGQ_meas_err):
+    res = minimize(chi_for_min,x0=[18,17,100],args=(mixing,gamma,Z,RGQ_meas,RGQ_meas_err),bounds=[(15.1,19.9),(12.1,19.9),(50.1,399.9)])
+    return res
