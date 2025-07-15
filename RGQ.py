@@ -68,7 +68,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
         pi_sig_Li.append(data_pi_Li[i][2])
 
     y_Li = power_law(egrid_Li, 1, gamma)
-    cs_Li = y_Li * pi_sig_Li #photoionization cross section
+    cs_Li = y_Li * pi_sig_Li * (1 - np.exp(-1*np.array(pi_sig_Li) * 1e-20 * N_li)) / (np.array(pi_sig_Li) * 1e-20 * N_li) #photoionization cross section
     R_pi_Li = 1e-20 * simpson(cs_Li, x=egrid_Li) #ionization rate [FAC output units: 1e20 cm-2]
         
     egrid_He = []
@@ -80,7 +80,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
         pi_sig_He.append(data_pi_He[i][2])
 
     y_He = power_law(egrid_He, 1, gamma)
-    cs_He = y_He * pi_sig_He
+    cs_He = y_He * pi_sig_He * (1 - np.exp(-1*np.array(pi_sig_He) * 1e-20 * N_he)) / (np.array(pi_sig_He) * 1e-20 * N_he)
     R_pi_He = 1e-20 * simpson(cs_He, x=egrid_He)
     
     #____
@@ -210,7 +210,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
         pi_sig_He.append(data_pi_He[i][2])
 
     y_He = power_law(egrid_He, 1, gamma)
-    cs_He = y_He * pi_sig_He
+    cs_He = y_He * pi_sig_He * (1 - np.exp(-1*np.array(pi_sig_He) * 1e-20 * N_he)) / (np.array(pi_sig_He) * 1e-20 * N_he)
     H_He = 1e-20 * simpson(cs_He, x=egrid_He)
     
     #_____
@@ -292,7 +292,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
         pi_sig_Li.append(data_pi_Li[i][2])
 
     y_Li = power_law(egrid_Li, 1, gamma)
-    cs_Li = y_Li * pi_sig_Li
+    cs_Li = y_Li * pi_sig_Li * (1 - np.exp(-1*np.array(pi_sig_Li) * 1e-20 * N_li)) / (np.array(pi_sig_Li) * 1e-20 * N_li)
     R_pi_Li = 1e-20 * simpson(cs_Li, x=egrid_Li) #FAC output units: 1e20 cm-2
         
     egrid_He = []
@@ -304,7 +304,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
         pi_sig_He.append(data_pi_He[i][2])
 
     y_He = power_law(egrid_He, 1, gamma)
-    cs_He = y_He * pi_sig_He
+    cs_He = y_He * pi_sig_He * (1 - np.exp(-1*np.array(pi_sig_He) * 1e-20 * N_he)) / (np.array(pi_sig_He) * 1e-20 * N_he)
     R_pi_He = 1e-20 * simpson(cs_He, x=egrid_He)
     
     #____
