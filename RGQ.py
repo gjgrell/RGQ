@@ -56,9 +56,9 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     R_0 = ratios[7]
     
     #____
-    #R_pi_He, R_pi_Li
+    #phi_He, phi_Li
         
-    #H = photoionization cross sections * ionizing radiation
+    #phi = photoionization rate
     egrid_Li = []
     pi_sig_Li = []
     data_pi_Li = np.loadtxt('facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
@@ -69,7 +69,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
 
     y_Li = power_law(egrid_Li, 1, gamma)
     cs_Li = y_Li * (1 - np.exp(-1*np.array(pi_sig_Li) * 1e-20 * N_li)) #photoionization cross section [FAC output units: 1e20 cm-2]
-    phi_Li = simpson(cs_Li, egrid_Li) #ionization rate 
+    phi_Li = simpson(cs_Li, egrid_Li) #photoionization rate 
         
     egrid_He = []
     pi_sig_He = []
@@ -159,9 +159,7 @@ def R_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     A = (data_A[he_trans_to_ground][w_loc][6]/np.sum(data_A[he_trans_to_ground,6]))
         
     #____
-    #S
-    
-    #Ionization rate parameter
+    #S - Ionization rate parameter
     S = phi_Li * K / (A * phi_He)
     
     #_____
@@ -215,9 +213,7 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     R_0 = ratios[7]
     
     #____
-    #H_He, H_Li
-        
-    #H = photoionization cross sections * ionizing radiation
+    #phi_He, phi_Li - photoionization rate
     egrid_Li = []
     pi_sig_Li = []
     data_pi_Li = np.loadtxt('/Users/ggrell/software/fac_ions/Li-like-adv/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
@@ -228,7 +224,7 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
 
     y_Li = power_law(egrid_Li, 1, gamma)
     cs_Li = y_Li * (1 - np.exp(-1*np.array(pi_sig_Li) * 1e-20 * N_li))
-    H_Li = simpson(cs_Li, egrid_Li) #FAC output units: 1e20 cm-2
+    phi_Li = simpson(cs_Li, egrid_Li) #FAC output units: 1e20 cm-2
         
     egrid_He = []
     pi_sig_He = []
@@ -240,7 +236,7 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
 
     y_He = power_law(egrid_He, 1, gamma)
     cs_He = y_He * (1 - np.exp(-1*np.array(pi_sig_He) * 1e-20 * N_he))
-    H_He = simpson(cs_He, egrid_He)
+    phi_He = simpson(cs_He, egrid_He)
     
     #____
     #P_RAD, P_ESC
@@ -311,7 +307,7 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     #S
     
     #Ionization rate parameter
-    S = H_Li * K / (A * H_He)
+    S = phi_Li * K / (A * phi_He)
     
     #_____
     #R
@@ -424,8 +420,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     R_0 = ratios[7]
     
     #____
-    #R_pi_Li, R_pi_He    
-    #R_pi = photoionization cross sections * ionizing radiation
+    #phi_Li, phi_He    
     egrid_Li = []
     pi_sig_Li = []
     data_pi_Li = np.loadtxt('facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
@@ -435,8 +430,8 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
         pi_sig_Li.append(data_pi_Li[i][2])
 
     y_Li = power_law(egrid_Li, 1, gamma)
-    cs_Li = y_Li * pi_sig_Li * (1 - np.exp(-1*np.array(pi_sig_Li) * 1e-20 * N_li)) / (np.array(pi_sig_Li) * 1e-20 * N_li)
-    R_pi_Li = 1e-20 * simpson(cs_Li, x=egrid_Li) #FAC output units: 1e20 cm-2
+    cs_Li = y_Li * (1 - np.exp(-1*np.array(pi_sig_Li) * 1e-20 * N_li))
+    phi_Li = simpson(cs_Li, egrid_Li) #FAC output units: 1e20 cm-2
         
     egrid_He = []
     pi_sig_He = []
@@ -447,8 +442,8 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
         pi_sig_He.append(data_pi_He[i][2])
 
     y_He = power_law(egrid_He, 1, gamma)
-    cs_He = y_He * pi_sig_He * (1 - np.exp(-1*np.array(pi_sig_He) * 1e-20 * N_he)) / (np.array(pi_sig_He) * 1e-20 * N_he)
-    R_pi_He = 1e-20 * simpson(cs_He, x=egrid_He)
+    cs_He = y_He * (1 - np.exp(-1*np.array(pi_sig_He) * 1e-20 * N_he))
+    phi_He = simpson(cs_He, egrid_He)
     
     #____
     #P_RAD, P_ESC
@@ -456,26 +451,22 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     #He-like x emitting
     He_x_params = get_params_He(Z, 'x')
     x_centroid_energy = df.loc[Z,'x']
-    #x_centroid_energy = He_x_params[0]
     x_lorentz_gamma = He_x_params[2] * hbar #eV
     
     #He-like y emitting
     He_y_params = get_params_He(Z, 'y')
     y_centroid_energy = df.loc[Z, 'y']
-    #y_centroid_energy = He_y_params[0]
     y_lorentz_gamma = He_y_params[2] * hbar #eV
     
     #Li-like s absorbing
     Li_s_params = get_params_Li(Z, 's')
     s_centroid_energy = df.loc[Z,'s']
-    #s_centroid_energy = Li_s_params[0]
     fac_s_osc_strength = Li_s_params[1] #oscillator strength
     s_lorentz_gamma = Li_s_params[2] * hbar #eV
     
     #Li-like t absorbing
     Li_t_params = get_params_Li(Z, 't')
     t_centroid_energy = df.loc[Z,'t']
-    #t_centroid_energy = Li_t_params[0]
     fac_t_osc_strength = Li_t_params[1] #oscillator strength
     t_lorentz_gamma = Li_t_params[2] * hbar #eV
 
@@ -496,9 +487,11 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     phi_s = voigt(e_grid, s_centroid_energy, sigma_em_s, s_lorentz_gamma)
     phi_t = voigt(e_grid, t_centroid_energy, sigma_em_t, t_lorentz_gamma)
 
-    #Absorption cross section for s
-    sigma_abs = h * (np.pi * e2 / (m_e * c)) * (fac_s_osc_strength * phi_s + fac_t_osc_strength * phi_t)
-
+    #Absorption cross section for s,t
+    sigma_s = h * (np.pi * e2 / (m_e * c)) * (fac_s_osc_strength * phi_s)
+    sigma_t = h * (np.pi * e2 / (m_e * c)) * (fac_t_osc_strength * phi_t)
+    sigma_abs = sigma_s + sigma_t
+    
     #omega - Radiative decay probabilities 
     fac_ai_rate_s = get_ai_rates(Z, 's')
     fac_omega_s = Li_s_params[2] / (Li_s_params[2] + fac_ai_rate_s)
@@ -507,10 +500,10 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     fac_omega_t = Li_t_params[2] / (Li_t_params[2] + fac_ai_rate_t)
     
     #Probability distribution for photon absorption
-    dPy = phi_y * (np.exp(-1 * sigma_abs * N_li)) 
-    dPx = phi_x * (np.exp(-1 * sigma_abs * N_li))
-    P_rad_y = mixing * ((1 - simpson(dPy, x=e_grid)) * (1 - (fac_omega_s + fac_omega_t)))
-    P_rad_x = mixing * (1 - simpson(dPx, x=e_grid) * (1 - (fac_omega_s + fac_omega_t)))
+    dPy = phi_y * (1 - np.exp(-1 * sigma_abs * N_li)) * (sigma_abs - fac_omega_s * sigma_s - fac_omega_t * sigma_t) / sigma_abs
+    dPx = phi_x * (1 - np.exp(-1 * sigma_abs * N_li)) * (sigma_abs - fac_omega_s * sigma_s - fac_omega_t * sigma_t) / sigma_abs
+    P_rad_y = mixing * (simpson(dPy, e_grid))
+    P_rad_x = mixing * (simpson(dPx, e_grid)) 
 
     #____
     #A
@@ -521,12 +514,8 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
 
     A = (data_A[he_trans_to_ground][w_loc][6]/np.sum(data_A[he_trans_to_ground,6]))
-        
-    #print("A = " +str(A))
-    
+            
     #____
-    #S
-    
     #He-like w line
     He_w_params = get_params_He(Z, 'w')
     w_centroid_energy = df.loc[Z,'w']
@@ -552,8 +541,9 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     E_0 = 1 #eV
 
     I_w = I_0 * (w_centroid_energy / E_0)**(-1 * gamma)
-    
-    S = N_li * R_pi_Li * K / (A * N_he * R_pi_He)
+
+    #S - Li ionization parameter
+    S = phi_Li * K / (A * phi_He)
     
     #_____
     #G
@@ -584,7 +574,7 @@ def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     X = B * (phi_UV + n_e * C_zi[1])    
     Xtilde = Btilde * (phi_tilde + n_e * C_zi[1])
     
-    G = ((1 + F - B + S) * ((Azg + Xtilde) / (Azg + X)) + Btilde) / (K + (I_w * L_w * K / (N_he * R_pi_He * A)))
+    G = ((1 + F - B + S) * ((Azg + Xtilde) / (Azg + X)) + Btilde) / (K + (I_w * L_w * K / (phi_He * A)))
     
     return G
     
