@@ -405,7 +405,7 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
     return Q
 
 #Calculates local (unobservable) G ratio (does not factor plasma geometry, observer position)
-def G_analytic(Z, N_li, N_he, v, phi, nele, mixing, gamma):
+def G_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     
     #____
     #F, B, Btilde, K, R0
