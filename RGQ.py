@@ -128,11 +128,6 @@ def R_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     phi_y = voigt(e_grid, y_centroid_energy, sigma_em_y, y_lorentz_gamma)
     phi_s = voigt(e_grid, s_centroid_energy, sigma_em_s, s_lorentz_gamma)
     phi_t = voigt(e_grid, t_centroid_energy, sigma_em_t, t_lorentz_gamma)
-
-    #Absorption cross section for s,t
-    sigma_s = h * (np.pi * e2 / (m_e * c)) * (fac_s_osc_strength * phi_s)
-    sigma_t = h * (np.pi * e2 / (m_e * c)) * (fac_t_osc_strength * phi_t)
-    sigma_abs = sigma_s + sigma_t
     
     #omega - Radiative decay probabilities 
     fac_ai_rate_s = get_ai_rates(Z, 's')
@@ -140,10 +135,15 @@ def R_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     
     fac_ai_rate_t = get_ai_rates(Z, 't')
     fac_omega_t = Li_t_params[2] / (Li_t_params[2] + fac_ai_rate_t)
+
+    #Absorption cross section for s,t
+    sigma_s = h * (np.pi * e2 / (m_e * c)) * (fac_s_osc_strength * phi_s) * (1 - fac_omega_s)
+    sigma_t = h * (np.pi * e2 / (m_e * c)) * (fac_t_osc_strength * phi_t) * (1 - fac_omega_t)
+    sigma_abs = sigma_s + sigma_t
     
     #Probability distribution for photon absorption
-    dPy = phi_y * (1 - np.exp(-1 * sigma_abs * N_li)) * (sigma_abs - fac_omega_s * sigma_s - fac_omega_t * sigma_t) / sigma_abs
-    dPx = phi_x * (1 - np.exp(-1 * sigma_abs * N_li)) * (sigma_abs - fac_omega_s * sigma_s - fac_omega_t * sigma_t) / sigma_abs
+    dPy = phi_y * (1 - np.exp(-1 * sigma_abs * N_li))
+    dPx = phi_x * (1 - np.exp(-1 * sigma_abs * N_li))
     P_rad_y = mixing * (simpson(dPy, e_grid))
     P_rad_x = mixing * (simpson(dPx, e_grid)) 
     
@@ -280,11 +280,6 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     phi_y = voigt(e_grid, y_centroid_energy, sigma_em_y, y_lorentz_gamma)
     phi_s = voigt(e_grid, s_centroid_energy, sigma_em_s, s_lorentz_gamma)
     phi_t = voigt(e_grid, t_centroid_energy, sigma_em_t, t_lorentz_gamma)
-
-    #Absorption cross section for s
-    sigma_s = h * (np.pi * e2 / (m_e * c)) * (fac_s_osc_strength * phi_s)
-    sigma_t = h * (np.pi * e2 / (m_e * c)) * (fac_t_osc_strength * phi_t)
-    sigma_abs = sigma_s + sigma_t
     
     #omega - Radiative decay probabilities 
     fac_ai_rate_s = get_ai_rates(Z, 's')
@@ -293,7 +288,11 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     fac_ai_rate_t = get_ai_rates(Z, 't')
     fac_omega_t = Li_t_params[2] / (Li_t_params[2] + fac_ai_rate_t)
     
-
+    #Absorption cross section for s
+    sigma_s = h * (np.pi * e2 / (m_e * c)) * (fac_s_osc_strength * phi_s) * (1 - fac_omega_s)
+    sigma_t = h * (np.pi * e2 / (m_e * c)) * (fac_t_osc_strength * phi_t) * (1 - fac_omega_t)
+    sigma_abs = sigma_s + sigma_t
+    
     #____
     #A
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
@@ -336,7 +335,7 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     A_0 = simpson(simpson(simpson((1 / r**2) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
 
     #Probability distribution for photon absorption
-    dPy = phi_y * (A_0 - E_integrand) * (sigma_abs - fac_omega_s * sigma_s - fac_omega_t * sigma_t) / sigma_abs
+    dPy = phi_y * (A_0 - E_integrand)
 
     R = (1 + F - B + S) * A_0 / (B * (A_0 - simpson(dPy, e_grid)))
     return R
@@ -488,11 +487,6 @@ def G_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     phi_y = voigt(e_grid, y_centroid_energy, sigma_em_y, y_lorentz_gamma)
     phi_s = voigt(e_grid, s_centroid_energy, sigma_em_s, s_lorentz_gamma)
     phi_t = voigt(e_grid, t_centroid_energy, sigma_em_t, t_lorentz_gamma)
-
-    #Absorption cross section for s,t
-    sigma_s = h * (np.pi * e2 / (m_e * c)) * (fac_s_osc_strength * phi_s)
-    sigma_t = h * (np.pi * e2 / (m_e * c)) * (fac_t_osc_strength * phi_t)
-    sigma_abs = sigma_s + sigma_t
     
     #omega - Radiative decay probabilities 
     fac_ai_rate_s = get_ai_rates(Z, 's')
@@ -500,10 +494,15 @@ def G_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     
     fac_ai_rate_t = get_ai_rates(Z, 't')
     fac_omega_t = Li_t_params[2] / (Li_t_params[2] + fac_ai_rate_t)
+
+    #Absorption cross section for s,t
+    sigma_s = h * (np.pi * e2 / (m_e * c)) * (fac_s_osc_strength * phi_s) * (1 - fac_omega_s)
+    sigma_t = h * (np.pi * e2 / (m_e * c)) * (fac_t_osc_strength * phi_t) * (1 - fac_omega_t)
+    sigma_abs = sigma_s + sigma_t
     
     #Probability distribution for photon absorption
-    dPy = phi_y * (1 - np.exp(-1 * sigma_abs * N_li)) * (sigma_abs - fac_omega_s * sigma_s - fac_omega_t * sigma_t) / sigma_abs
-    dPx = phi_x * (1 - np.exp(-1 * sigma_abs * N_li)) * (sigma_abs - fac_omega_s * sigma_s - fac_omega_t * sigma_t) / sigma_abs
+    dPy = phi_y * (1 - np.exp(-1 * sigma_abs * N_li))
+    dPx = phi_x * (1 - np.exp(-1 * sigma_abs * N_li))
     P_rad_y = mixing * (simpson(dPy, e_grid))
     P_rad_x = mixing * (simpson(dPx, e_grid)) 
 
@@ -670,11 +669,6 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     phi_y = voigt(e_grid, y_centroid_energy, sigma_em_y, y_lorentz_gamma)
     phi_s = voigt(e_grid, s_centroid_energy, sigma_em_s, s_lorentz_gamma)
     phi_t = voigt(e_grid, t_centroid_energy, sigma_em_t, t_lorentz_gamma)
-
-    #Absorption cross section for s,t
-    sigma_s = h * (np.pi * e2 / (m_e * c)) * (fac_s_osc_strength * phi_s)
-    sigma_t = h * (np.pi * e2 / (m_e * c)) * (fac_t_osc_strength * phi_t)
-    sigma_abs = sigma_s + sigma_t
     
     #omega - Radiative decay probabilities 
     fac_ai_rate_s = get_ai_rates(Z, 's')
@@ -682,6 +676,11 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     
     fac_ai_rate_t = get_ai_rates(Z, 't')
     fac_omega_t = Li_t_params[2] / (Li_t_params[2] + fac_ai_rate_t)
+
+    #Absorption cross section for s,t
+    sigma_s = h * (np.pi * e2 / (m_e * c)) * (fac_s_osc_strength * phi_s) * (1 - fac_omega_s)
+    sigma_t = h * (np.pi * e2 / (m_e * c)) * (fac_t_osc_strength * phi_t) * (1 - fac_omega_t)
+    sigma_abs = sigma_s + sigma_t
     
     #Probability distribution for photon absorption
     dPy = phi_y * (1 - np.exp(-1 * sigma_abs * N_li)) * (sigma_abs - fac_omega_s * sigma_s - fac_omega_t * sigma_t) / sigma_abs
@@ -757,7 +756,7 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
 
 
     #Probability distribution for photon absorption
-    dPy = phi_y * (A_0 - E_integrand) * (sigma_abs - fac_omega_s * sigma_s - fac_omega_t * sigma_t) / sigma_abs
+    dPy = phi_y * (A_0 - E_integrand)
 
     G = (1 + F - B + S) / (K + (I_w * L_w * K / (phi_He * A))) + (B * (A_0 - simpson(dPy, e_grid))) / (A_0 * (K + (I_w * L_w * K / (phi_He * A))))
     return G
