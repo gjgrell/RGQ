@@ -197,7 +197,7 @@ def R_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     return R
 
 #Calculates observed R ratio (factoring in plasma geometry and observer position)
-def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
+def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, beta):
     
     #____
     #F, B, Btilde, K, R0
@@ -315,7 +315,7 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     #Conical geometry
     theta_lin = np.linspace(0, alpha, 100)
     phi_lin = np.linspace(0, 2*np.pi, 100)
-    r_lin = np.linspace(1, R, 200)
+    r_lin = np.linspace(R0, R, 200)
     
     theta, phi, r = np.meshgrid(theta_lin, phi_lin, r_lin)
 
@@ -330,9 +330,9 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     #dr, dtheta, dphi integration
     for i in range(len(e_grid)):
         tau = N_li_bar * sigma_abs[i]
-        E_integrand[i] = simpson(simpson(simpson((np.exp(-1 * tau) / r**2) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)    
+        E_integrand[i] = simpson(simpson(simpson((np.exp(-1 * tau) / r**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)    
     
-    A_0 = simpson(simpson(simpson((1 / r**2) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
+    A_0 = simpson(simpson(simpson((1 / r**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
 
     #Probability distribution for photon absorption
     dPy = phi_y * (A_0 - E_integrand)
@@ -580,7 +580,7 @@ def G_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     return G
     
 #Calculates observed R ratio (factoring in plasma geometry and observer position)
-def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
+def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, beta):
     #____
     #F, B, Btilde, K, R0
     
@@ -737,7 +737,7 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     #N_li integration
     theta_lin = np.linspace(0, alpha, 100)
     phi_lin = np.linspace(0, 2*np.pi, 100)
-    r_lin = np.linspace(1, R, 200)
+    r_lin = np.linspace(R0, R, 200)
     
     theta, phi, r = np.meshgrid(theta_lin, phi_lin, r_lin)
 
@@ -750,9 +750,9 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R):
     
     for i in range(len(e_grid)):
         tau = N_li_bar * sigma_abs[i]
-        E_integrand[i] = simpson(simpson(simpson((np.exp(-1 * tau) / r**2) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)    
+        E_integrand[i] = simpson(simpson(simpson((np.exp(-1 * tau) / r**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)    
     
-    A_0 = simpson(simpson(simpson((1 / r**2) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
+    A_0 = simpson(simpson(simpson((1 / r**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
 
 
     #Probability distribution for photon absorption
