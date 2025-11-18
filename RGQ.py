@@ -48,8 +48,8 @@ def R_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     ratios = get_ratios(Z, phi)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
     B = ratios[1] #Effective branching ratio
-    Btilde_x = ratios[2] #Branching ratio for x to multiply by escape probability
-    Btilde_y = ratios[3] #Branching ratio for y to multiply by escape probability
+    B_x = ratios[2] #Branching ratio for x to multiply by escape probability
+    B_y = ratios[3] #Branching ratio for y to multiply by escape probability
     UV_x = ratios[4]
     UV_y = ratios[5]
     K = ratios[6] #Ratio of radiative recombination rates of w / (x + y)
@@ -166,9 +166,9 @@ def R_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     #R
     
     #Effective branching ratios weighted by escape probability
-    Btilde_y_abs = Btilde_y * (1 - P_rad_y)
-    Btilde_x_abs = Btilde_x * (1 - P_rad_x)
-    Btilde = Btilde_y_abs + Btilde_x_abs
+    Btilde_y = B_y * (1 - P_rad_y)
+    Btilde_x = B_x * (1 - P_rad_x)
+    Btilde = Btilde_y + Btilde_x
     
     He_z_params = get_params_He(Z, 'z')
     Azg = He_z_params[2]
@@ -206,8 +206,8 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     ratios = get_ratios(Z, phi)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
     B = ratios[1] #Effective branching ratio
-    Btilde_x = ratios[2] #Branching ratio for x to multiply by escape probability
-    Btilde_y = ratios[3] #Branching ratio for y to multiply by escape probability
+    B_x = ratios[2] #Branching ratio for x to multiply by escape probability
+    B_y = ratios[3] #Branching ratio for y to multiply by escape probability
     UV_x = ratios[4]
     UV_y = ratios[5]
     K = ratios[6] #Ratio of radiative recombination rates of w / (x + y)
@@ -335,9 +335,13 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     A_0 = simpson(simpson(simpson((1 / r**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
 
     #Probability distribution for photon absorption
-    dPy = phi_y * (A_0 - E_integrand)
-
-    R = (1 + F - B + S) * A_0 / (B * (A_0 - simpson(dPy, e_grid)))
+    dPy = phi_y * (A_0 - E_integrand) 
+    P_rad_y = mixing * (simpson(dPy, e_grid))
+    
+    dPx = phi_x * (A_0 - E_integrand)
+    P_rad_x = mixing * (simpson(dPx, e_grid))
+    
+    R = (1 + F - B + S) * A_0 / (B_y * (A_0 - P_rad_y) + B_x * (A_0 - P_rad_x))
     return R
     
 def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
@@ -413,8 +417,8 @@ def G_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     ratios = get_ratios(Z, phi)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
     B = ratios[1] #Effective branching ratio
-    Btilde_x = ratios[2] #Branching ratio for x to multiply by escape probability
-    Btilde_y = ratios[3] #Branching ratio for y to multiply by escape probability
+    B_x = ratios[2] #Branching ratio for x to multiply by escape probability
+    B_y = ratios[3] #Branching ratio for y to multiply by escape probability
     UV_x = ratios[4]
     UV_y = ratios[5]
     K = ratios[6] #Ratio of radiative recombination rates of w / (x + y)
@@ -549,9 +553,9 @@ def G_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     #_____
     #G
     
-    Btilde_y_abs = Btilde_y * (1 - P_rad_y)
-    Btilde_x_abs = Btilde_x * (1 - P_rad_x)
-    Btilde = Btilde_y_abs + Btilde_x_abs
+    Btilde_y = B_y * (1 - P_rad_y)
+    Btilde_x = B_x * (1 - P_rad_x)
+    Btilde = Btilde_y + Btilde_x
     
     He_z_params = get_params_He(Z, 'z')
     Azg = He_z_params[2]
@@ -588,8 +592,8 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     ratios = get_ratios(Z, phi)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
     B = ratios[1] #Effective branching ratio
-    Btilde_x = ratios[2] #Branching ratio for x to multiply by escape probability
-    Btilde_y = ratios[3] #Branching ratio for y to multiply by escape probability
+    B_x = ratios[2] #Branching ratio for x to multiply by escape probability
+    B_y = ratios[3] #Branching ratio for y to multiply by escape probability
     UV_x = ratios[4]
     UV_y = ratios[5]
     K = ratios[6] #Ratio of radiative recombination rates of w / (x + y)
@@ -757,8 +761,12 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
 
     #Probability distribution for photon absorption
     dPy = phi_y * (A_0 - E_integrand)
-
-    G = (1 + F - B + S) / (K + (I_w * L_w * K / (phi_He * A))) + (B * (A_0 - simpson(dPy, e_grid))) / (A_0 * (K + (I_w * L_w * K / (phi_He * A))))
+    P_rad_y = mixing * (simpson(dPy, e_grid))
+    
+    dPx = phi_x * (A_0 - E_integrand)
+    P_rad_x = mixing * (simpson(dPx, e_grid))
+    
+    G = (1 + F - B + S) / (K + (I_w * L_w * K / (phi_He * A))) + (B_y * (A_0 - P_rad_y) + B_x * (A_0 - P_rad_x)) / (A_0 * (K + (I_w * L_w * K / (phi_He * A))))
     return G
 
 def get_RGQ(Z, N_li, N_he, v, phi, nele, mixing, gamma):
