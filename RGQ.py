@@ -9,6 +9,7 @@ from scipy.optimize import minimize
 
 from calc_Z_emit_ratio import *
 from line_params import *
+from frac_calc import *
 
 #Constants
 c = 3e10 #speed of light (cm/s)
@@ -41,11 +42,11 @@ def voigt(x, x0, sigma, gamma):
     return np.real(special.wofz((x - x0 + 1j*gamma)/sigma/np.sqrt(2))) / sigma / np.sqrt(2*np.pi)
 
 #Calculates local (unobservable) R ratio (does not factor plasma geometry, observer position)
-def R_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
+def R_analytic_local(Z, N_li, N_he, v, pi, nele, mixing, gamma):
     
     #____
     #Relevant ratios F, B, K for analytic R ratio calculation
-    ratios = get_ratios(Z, phi)
+    ratios = get_ratios(Z, pi)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
     B = ratios[1] #Effective branching ratio
     B_x = ratios[2] #Branching ratio for x to multiply by escape probability
@@ -197,13 +198,13 @@ def R_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     return R
 
 #Calculates observed R ratio (factoring in plasma geometry and observer position)
-def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, beta):
+def R_analytic_obs(Z, N_li, N_he, v, mixing, gamma, alpha, R0, R, L, beta):
     
     #____
     #F, B, Btilde, K, R0
     
     #Relevant ratios F, B, K for analytic R ratio calculation
-    ratios = get_ratios(Z, phi)
+    ratios = get_ratios(Z, 0)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
     B = ratios[1] #Effective branching ratio
     B_x = ratios[2] #Branching ratio for x to multiply by escape probability
@@ -217,7 +218,7 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     #phi_He, phi_Li - photoionization rate
     egrid_Li = []
     pi_sig_Li = []
-    data_pi_Li = np.loadtxt('/Users/ggrell/software/fac_ions/Li-like-adv/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_Li = np.loadtxt('facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
     
     for i in range(len(data_pi_Li)):
         egrid_Li.append(data_pi_Li[i][0])
@@ -229,7 +230,7 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
         
     egrid_He = []
     pi_sig_He = []
-    data_pi_He = np.loadtxt('/Users/ggrell/software/fac_ions/He-like-adv/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_He = np.loadtxt('facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
 
     for i in range(len(data_pi_He)):
         egrid_He.append(data_pi_He[i][0])
@@ -296,7 +297,7 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     #____
     #A
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('/Users/ggrell/software/fac_ions/Li-like-adv/A_calc_new/'+Z+'_10.0_6.0_0.0-he.ln')
+    data_A = np.loadtxt('facfiles/A_calc/'+Z+'_10.0_6.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
@@ -310,7 +311,9 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     S = phi_Li * K / (A * phi_He)
     
     #_____
-    #R
+    #R-ratio calculation
+    R0 = R0 * 3.086e+18 #cm-3
+    R = R * 3.086e+18 #cm-3
     
     #Conical geometry
     theta_lin = np.linspace(0, alpha, 100)
@@ -322,18 +325,23 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     endpoint = (np.sqrt(np.cos(theta)**2 * np.tan(alpha)**2) - np.sin(theta)**2 * np.sin(phi)**2)
     yz = np.sqrt(np.sin(theta)**2 * np.sin(phi)**2 + np.cos(theta)**2)
 
-    #N_li integration
-    N_li_bar = N_li * (R / (R - 1)) * (1/(r * yz)) * (np.arctan(endpoint / yz) - np.arctan(np.sin(theta) * np.cos(phi) / yz)) 
-
+	#N_li integration
+    N_li_bar = N_li * (R / (R - R0)) * (R0/(r * yz)) * (np.arctan(endpoint / yz) - np.arctan(np.sin(theta) * np.cos(phi) / yz)) 
+        
     E_integrand = np.zeros_like(sigma_abs)
-
-    #dr, dtheta, dphi integration
+    
+    if beta == 2:
+    	Froot = 1
+    else:
+    	Froot = F_n0_root(L=L,beta=beta,r=r, r0=R0, rmax=R)
+    
     for i in range(len(e_grid)):
         tau = N_li_bar * sigma_abs[i]
-        E_integrand[i] = simpson(simpson(simpson((np.exp(-1 * tau) / r**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)    
-    
-    A_0 = simpson(simpson(simpson((1 / r**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
-
+        E_integrand[i] = simpson(simpson(simpson((np.exp(-1 * tau) / (r/R0)**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)    
+        
+    #Spatial integral
+    A_0 = simpson(simpson(simpson((1 / (r/R0)**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
+        
     #Probability distribution for photon absorption
     dPy = phi_y * (A_0 - E_integrand) 
     P_rad_y = mixing * (simpson(dPy, e_grid))
@@ -344,7 +352,7 @@ def R_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     R = (1 + F - B + S) * A_0 / (B_y * (A_0 - P_rad_y) + B_x * (A_0 - P_rad_x))
     return R
     
-def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
+def Q_analytic(Z, N_li, N_he, v, pi, nele, gamma):
         
     #____
     #H_He
@@ -408,13 +416,13 @@ def Q_analytic(Z, N_li, N_he, v, phi, nele, gamma):
     return Q
 
 #Calculates local (unobservable) G ratio (does not factor plasma geometry, observer position)
-def G_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
+def G_analytic_local(Z, N_li, N_he, v, pi, nele, mixing, gamma):
     
     #____
     #F, B, Btilde, K, R0
     
     #Relevant ratios F, B, K for analytic R ratio calculation
-    ratios = get_ratios(Z, phi)
+    ratios = get_ratios(Z, pi)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
     B = ratios[1] #Effective branching ratio
     B_x = ratios[2] #Branching ratio for x to multiply by escape probability
@@ -584,12 +592,12 @@ def G_analytic_local(Z, N_li, N_he, v, phi, nele, mixing, gamma):
     return G
     
 #Calculates observed R ratio (factoring in plasma geometry and observer position)
-def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, beta):
+def G_analytic_obs(Z, N_li, N_he, v, mixing, gamma, alpha, R0, R, L, beta):
     #____
     #F, B, Btilde, K, R0
     
     #Relevant ratios F, B, K for analytic R ratio calculation
-    ratios = get_ratios(Z, phi)
+    ratios = get_ratios(Z, 0)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
     B = ratios[1] #Effective branching ratio
     B_x = ratios[2] #Branching ratio for x to multiply by escape probability
@@ -604,31 +612,25 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     
     egrid_Li = []
     pi_sig_Li = []
-    data_pi_Li = np.loadtxt('/Users/ggrell/software/fac_ions/Li-like-adv/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_Li = np.loadtxt('facfiles/RR_cs_Li/'+Z+'03_rr_cs_Li_K_edge.txt',skiprows=1,usecols=(0,3,4))
     
     for i in range(len(data_pi_Li)):
         egrid_Li.append(data_pi_Li[i][0])
         pi_sig_Li.append(data_pi_Li[i][2])
 
     y_Li = power_law(egrid_Li, 1, gamma)
-    #cs_Li = y_Li * pi_sig_Li * (1 - np.exp(-1*np.array(pi_sig_Li) * 1e-20 * N_li)) / (np.array(pi_sig_Li) * 1e-20 * N_li) #photoionization cross section x penetration depth
-    #R_pi_Li = 1e-20 * simpson(cs_Li, x=egrid_Li) #ionization rate [FAC output units: 1e20 cm-2]
-     
     cs_Li = y_Li * (1 - np.exp(-1*np.array(pi_sig_Li) * 1e-20 * N_li))
     phi_Li = simpson(cs_Li, egrid_Li) #FAC output units: 1e20 cm-2
        
     egrid_He = []
     pi_sig_He = []
-    data_pi_He = np.loadtxt('/Users/ggrell/software/fac_ions/He-like-adv/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
+    data_pi_He = np.loadtxt('facfiles/RR_cs_He/'+Z+'02_rr_cs_He_K_edge.txt',skiprows=1,usecols=(0,3,4))
 
     for i in range(len(data_pi_He)):
         egrid_He.append(data_pi_He[i][0])
         pi_sig_He.append(data_pi_He[i][2])
 
     y_He = power_law(egrid_He, 1, gamma)
-    #cs_He = y_He * pi_sig_He * (1 - np.exp(-1*np.array(pi_sig_He) * 1e-20 * N_he)) / (np.array(pi_sig_He) * 1e-20 * N_he)
-    #R_pi_He = 1e-20 * simpson(cs_He, x=egrid_He)
-    
     cs_He = y_He * (1 - np.exp(-1*np.array(pi_sig_He) * 1e-20 * N_he))
     phi_He = simpson(cs_He, egrid_He)
     
@@ -695,7 +697,7 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     #____
     #A
     # A - Ratio of R rate for w line / R rate for all Hydrogen ions
-    data_A = np.loadtxt('/Users/ggrell/software/RGQ/facfiles/A_calc/'+Z+'_10.0_6.0_0.0-he.ln')
+    data_A = np.loadtxt('facfiles/A_calc/'+Z+'_10.0_6.0_0.0-he.ln')
 
     he_trans_to_ground = np.nonzero((data_A[:,0]==2)*(data_A[:,1]==0))
     w_loc = np.nonzero(data_A[he_trans_to_ground][:,2]==6)[0][0]
@@ -738,7 +740,10 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
     #_____
     #G
 
-    #N_li integration
+    R0 = R0 * 3.086e+18 #cm-3
+    R = R * 3.086e+18 #cm-3
+
+    #Conical geometry
     theta_lin = np.linspace(0, alpha, 100)
     phi_lin = np.linspace(0, 2*np.pi, 100)
     r_lin = np.linspace(R0, R, 200)
@@ -747,26 +752,33 @@ def G_analytic_obs(Z, N_li, N_he, v, phi, nele, mixing, gamma, alpha, R0, R, bet
 
     endpoint = (np.sqrt(np.cos(theta)**2 * np.tan(alpha)**2) - np.sin(theta)**2 * np.sin(phi)**2)
     yz = np.sqrt(np.sin(theta)**2 * np.sin(phi)**2 + np.cos(theta)**2)
-
-    N_li_bar = N_li * (R / (R - 1)) * (1/(r * yz)) * (np.arctan(endpoint / yz) - np.arctan(np.sin(theta) * np.cos(phi) / yz)) 
-
+    
+    #N_li integration
+    N_li_bar = N_li * (R / (R - R0)) * (R0/(r * yz)) * (np.arctan(endpoint / yz) - np.arctan(np.sin(theta) * np.cos(phi) / yz)) 
+        
     E_integrand = np.zeros_like(sigma_abs)
+    
+    if beta == 2:
+    	Froot = 1
+    else:
+    	Froot = F_n0_root(L,beta,r, R0, R)
     
     for i in range(len(e_grid)):
         tau = N_li_bar * sigma_abs[i]
-        E_integrand[i] = simpson(simpson(simpson((np.exp(-1 * tau) / r**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)    
-    
-    A_0 = simpson(simpson(simpson((1 / r**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
-
-
+        E_integrand[i] = simpson(simpson(simpson((np.exp(-1 * tau) / (r/R0)**(beta)) * np.sin(theta) * Froot, theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)    
+        
+    #Spatial integral
+    A_0 = simpson(simpson(simpson((1 / (r/R0)**(beta)) * np.sin(theta) * Froot, theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
+        
     #Probability distribution for photon absorption
-    dPy = phi_y * (A_0 - E_integrand)
+    dPy = phi_y * (A_0 - E_integrand) 
     P_rad_y = mixing * (simpson(dPy, e_grid))
     
     dPx = phi_x * (A_0 - E_integrand)
     P_rad_x = mixing * (simpson(dPx, e_grid))
     
     G = (1 + F - B + S) / (K + (I_w * L_w * K / (phi_He * A))) + (B_y * (A_0 - P_rad_y) + B_x * (A_0 - P_rad_x)) / (A_0 * (K + (I_w * L_w * K / (phi_He * A))))
+    
     return G
 
 def get_RGQ(Z, N_li, N_he, v, phi, nele, mixing, gamma):
