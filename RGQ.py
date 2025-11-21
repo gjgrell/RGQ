@@ -333,14 +333,14 @@ def R_analytic_obs(Z, N_li, N_he, v, mixing, gamma, alpha, R0, R, L, beta):
     if beta == 2:
     	Froot = 1
     else:
-    	Froot = F_n0_root(L=L,beta=beta,r=r, r0=R0, rmax=R)
+    	Froot = F_n0_root(L,r=r, r0=R0, rmax=R, beta=beta)
     
     for i in range(len(e_grid)):
         tau = N_li_bar * sigma_abs[i]
-        E_integrand[i] = simpson(simpson(simpson((np.exp(-1 * tau) / (r/R0)**(beta)) * np.sin(theta) * Froot, theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)    
+        E_integrand[i] = simpson(simpson(simpson((np.exp(-1 * tau) / (r/R0)**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)    
         
     #Spatial integral
-    A_0 = simpson(simpson(simpson((1 / (r/R0)**(beta)) * np.sin(theta) * Froot, theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
+    A_0 = simpson(simpson(simpson((1 / (r/R0)**(beta)) * np.sin(theta), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
         
     #Probability distribution for photon absorption
     dPy = phi_y * (A_0 - E_integrand) 
@@ -761,7 +761,7 @@ def G_analytic_obs(Z, N_li, N_he, v, mixing, gamma, alpha, R0, R, L, beta):
     if beta == 2:
     	Froot = 1
     else:
-    	Froot = F_n0_root(L,beta,r, R0, R)
+    	Froot = F_n0_root(L,r=r, r0=R0, rmax=R, beta=beta)
     
     for i in range(len(e_grid)):
         tau = N_li_bar * sigma_abs[i]
