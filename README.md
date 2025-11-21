@@ -18,8 +18,8 @@ The input parameters for the ratio calculations are as follows:
 - mixing factor
 - $\gamma$ - energy power law spectral index
 - $\alpha$ - opening angle (arcsec) $[Observed ratios only]$
-- R0 - cone inner radius (cm) (Observed ratios only)
-- R - maximum cone radius (cm) (Observed ratios only)
+- R0 - cone inner radius (parsecs) (Observed ratios only)
+- R - maximum cone radius (parsecs) (Observed ratios only)
 - L - luminosity ($erg$ $s^{-1}$) (Observed ratios only)
 - $\beta$ - wind velocity coefficient (Observed ratios only)
 
