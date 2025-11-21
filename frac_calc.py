@@ -14,16 +14,18 @@ def xi_A_values(file):
 def xi_r0(L, r0, n0):
     return L / (n0 * r0**2)
 
-def xi_rmax(L, beta, r, r0, n0):
+def xi_rmax(L, r0, r, n0, beta):
     return L / (n0 * r0**beta * r**(2-beta))
 
-def F(L,beta, r, r0, n0):
-    xi = xi_rmax(L,beta, r, r0, n0)
+def F(L, r0, r, n0, beta):
+    xi = xi_rmax(L, r0, r, n0, beta)
     xi_values, A_values = xi_A_values("Si_he.csv")
     return np.interp(xi, xi_values, A_values)
 
+
 def Fdiff(n0,L,r0,rmax,beta):
-    return F(L,beta, r0, r0, n0) - F(L,beta, r0, rmax, n0)
+    return F(L, r0, r0, n0, beta) - F(L, r0, rmax, n0, beta)
+
 
 def find_min_max_x(n0_scan,L,r0,rmax,beta):
     values = [Fdiff(n,L,r0,rmax,beta) for n in n0_scan]
@@ -33,8 +35,7 @@ def find_min_max_x(n0_scan,L,r0,rmax,beta):
 
     return min_index, max_index, values[min_index], values[max_index]
 
-
-def F_n0_root(L, beta, r, r0, rmax):
+def F_n0_root(L, r, r0, rmax, beta):
 
     n0_scan = np.logspace(-5, 5, 1000)
 
@@ -42,5 +43,5 @@ def F_n0_root(L, beta, r, r0, rmax):
     n0_upper = n0_scan[find_min_max_x(n0_scan,L,r0,rmax,beta)[1]]
 
     n0_solution = brentq(Fdiff,n0_lower,n0_upper,args=(L,r0,rmax,beta))
-    
-    return F(L,beta, r, r0, n0_solution)
+
+    return F(L,r0, r, n0_solution,beta)
