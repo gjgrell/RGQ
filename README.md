@@ -18,12 +18,15 @@ The input parameters for the ratio calculations are as follows:
 - mixing factor
 - $\gamma$ - energy power law spectral index
 - $\alpha$ - opening angle (arcsec) $[Observed ratios only]$
+- R0 - cone inner radius (cm) (Observed ratios only)
 - R - maximum cone radius (cm) (Observed ratios only)
+- L - luminosity ($erg$ $s^{-1}$) (Observed ratios only)
+- $\beta$ - wind velocity coefficient (Observed ratios only)
 
 The following commands calculate the $\mathcal{R}$, $\mathcal{G}$, and $\mathcal{Q}$ ratios:
 
 - $\mathcal{R}$ = R_analytic_local(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing, gamma)
-- $\bar{\mathcal{R}}$ = R_analytic_obs(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing, gamma, alpha, R)
+- $\bar{\mathcal{R}}$ = R_analytic_obs(Z, $N_{Li}$, $N_{He}$, v, mixing, $\gamma$, $\alpha$, R0, R, L, $\beta$)
 - $\mathcal{G}$ = G_analytic_local(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing, gamma)
-- $\bar{\mathcal{G}}$ = G_analytic_obs(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, mixing, gamma, alpha, R)
-- $\mathcal{Q}$ = Q_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, gamma)
+- $\bar{\mathcal{G}}$ = G_analytic_obs(Z, $N_{Li}$, $N_{He}$, v, mixing, $\gamma$, $\alpha$, R0, R, L, $\beta$)
+- $\mathcal{Q}$ = Q_analytic(Z, $N_{Li}$, $N_{He}$, v, $\phi_{UV}$, $n_{e}$, $\gamma$)
