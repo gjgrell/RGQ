@@ -12,7 +12,7 @@ The input parameters for the ratio calculations are as follows:
 - Z - atomic symbol (string)
 - $N_{Li}$ - lithium-like column density ($cm^{-2}$)
 - $N_{He}$ - helium-like column density ($cm^{-2}$)
-- \sigma_{v} - velocity dispersion ($km$ $s^{-1}$)
+- $\sigma_{v}$ - velocity dispersion ($km$ $s^{-1}$)
 - $\phi_{UV}$ - UV photoexcitation rate ($s^{-1}$)
 - $n_{e}$ - electron density ($cm^{-3}$)
 - mixing factor
@@ -25,8 +25,8 @@ The input parameters for the ratio calculations are as follows:
 
 The following commands calculate the $\mathcal{R}$, $\mathcal{G}$, and $\mathcal{Q}$ ratios:
 
-- $\mathcal{R}$ = R_analytic_local(Z, $N_{Li}$, $N_{He}$, \sigma_{v}, $\phi_{UV}$, $n_{e}$, mixing, gamma)
-- $\bar{\mathcal{R}}$ = R_analytic_obs(Z, $N_{Li}$, $N_{He}$, \sigma_{v}, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$)
-- $\mathcal{G}$ = G_analytic_local(Z, $N_{Li}$, $N_{He}$, \sigma_{v}, $\phi_{UV}$, $n_{e}$, mixing, gamma)
-- $\bar{\mathcal{G}}$ = G_analytic_obs(Z, $N_{Li}$, $N_{He}$, \sigma_{v}, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$)
-- $\mathcal{Q}$ = Q_analytic(Z, $N_{Li}$, $N_{He}$, \sigma_{v}, $\phi_{UV}$, $n_{e}$, $\gamma$)
+- $\mathcal{R}$ = R_analytic_local(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, $\phi_{UV}$, $n_{e}$, mixing, gamma)
+- $\bar{\mathcal{R}}$ = R_analytic_obs(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$)
+- $\mathcal{G}$ = G_analytic_local(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, $\phi_{UV}$, $n_{e}$, mixing, gamma)
+- $\bar{\mathcal{G}}$ = G_analytic_obs(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$)
+- $\mathcal{Q}$ = Q_analytic(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$ $\phi_{UV}$, $n_{e}$, $\gamma$)
