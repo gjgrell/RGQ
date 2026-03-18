@@ -18,12 +18,13 @@ The input parameters for the ratio calculations are as follows:
 - mixing factor
 - $\gamma$ - energy power law spectral index
 
-- $\alpha$ - opening angle (arcsec) (Observed ratios only)
-- R0 - cone inner radius (parsecs) (Observed ratios only)
-- R - maximum cone radius (parsecs) (Observed ratios only)
-- L - luminosity ($erg$ $s^{-1}$) (Observed ratios only)
-- $\beta$ - wind velocity coefficient (Observed ratios only)
-- $\xi$ - ionization parameter (Observed ratios only)
+For the observed ratio calculations, the additional parameters are:
+- $\alpha$ - opening angle (arcsec)
+- R0 - cone inner radius (parsecs)
+- R - maximum cone radius (parsecs)
+- L - luminosity ($erg$ $s^{-1}$) 
+- $\beta$ - wind velocity coefficient 
+- $\xi_{max}$ - maximum ionization parameter 
 
 The following commands calculate the $\mathcal{R}$, $\mathcal{G}$, and $\mathcal{Q}$ ratios:
 
