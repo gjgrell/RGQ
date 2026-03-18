@@ -18,6 +18,7 @@ The input parameters for the ratio calculations are as follows:
 - mixing factor
 - $\gamma$ - energy power law spectral index
 
+
 For the observed ratio calculations, the additional parameters are:
 - $\alpha$ - opening angle (arcsec)
 - R0 - cone inner radius (parsecs)
