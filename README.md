@@ -24,11 +24,11 @@ The input parameters for the ratio calculations are as follows:
 - mixing factor
 - $\gamma$ - energy power law spectral index
 
-The following commands calculate the observed (global) $\bar{\mathcal{R}}$ and $\bar{\mathcal{G}}$ ratios averaged over entire medium factoring in the plasma geometry and observer position. Here we assume a simple, truncated cone for geometry, and a cold photoionized plasma ($n_e$ << $n_c$, $\Phi_{z,i}$ << $\Phi_{c}$):
+The following commands calculate the observed (global) $\bar{\mathcal{R}}$ and $\bar{\mathcal{G}}$ ratios averaged over entire medium factoring in the plasma geometry and observer position. Here we assume a cold photoionized plasma ($n_e$ << $n_c$, $\Phi_{z,i}$ << $\Phi_{c}$):
 - $\bar{\mathcal{R}}$ = R_analytic_obs(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$, $\xi_{max}$)
 - $\bar{\mathcal{G}}$ = G_analytic_obs(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$, $\xi_{max}$)
 
-The following commands also calculate the observed (global) $\mathcal{R}$ ratio averaged over entire medium factoring in the plasma geometry and observer position, but with the column densities calculated as a function of radial distribution. We again assume a simple, truncated cone for geometry, and a cold photoionized plasma ($n_e$ << $n_c$, $\Phi_{z,i}$ << $\Phi_{c}$):
+The following commands also calculate the observed (global) $\mathcal{R}$ ratio averaged over entire medium factoring in the plasma geometry and observer position, but with the column densities calculated as a function of radial distribution. We again assume a cold photoionized plasma ($n_e$ << $n_c$, $\Phi_{z,i}$ << $\Phi_{c}$):
 - $\bar{\mathcal{R}}^\prime$ = R_analytic_global(Z, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$, $\xi_{max}$)
 
 For the observed ratio calculations, the additional parameters are:
