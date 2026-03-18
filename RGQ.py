@@ -414,8 +414,8 @@ def R_analytic_obs(Z, N_li, N_he, v, mixing, gamma, alpha, R0, R, L, beta, ximax
 
 #Calculates observed (global) R ratio averaged over entire medium factoring in plasma geometry and observer position (FULL APPROX)
 #Assuming simple, truncated cone for geometry
-#Assumming cold photoionized plasma (ne << nc, phi_UV << phi_c) 
-def R_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, xi_max):
+#Assuming cold photoionized plasma (ne << nc, phi_UV << phi_c) 
+def R_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
 	
     #Relevant ratios F, B, K for analytic R ratio calculation
     ratios = get_ratios(Z, 0)
@@ -503,7 +503,7 @@ def R_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, xi_max):
 	#Froot - ion fraction of He,Li based on root-calculated initial density n0 (as a function of xi - XSTAR)
     #n0 bimodal distribution (low - high)
     
-    xi_max = xi_max #xi_range("/Users/ggrell/software/RGQ/Si_he.csv", L,r0, Fmin)
+    xi_max = ximax 
     
     n0_solution = L / (xi_max * R0**(2))
     n0_low = (2 * n0_solution) / (1 + 1 / (1 - mixing)) 
@@ -513,7 +513,7 @@ def R_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, xi_max):
     xi_high = L / (n0_high * R0**(beta) * r_grid**(2-beta))    
     
     #He-like
-    log_xi_he, log_A_he = xi_A_values("/Users/ggrell/software/RGQ/Si_he.csv")
+    log_xi_he, log_A_he = xi_A_values(Z+"_he.csv")
     
     f_he = interpolate.interp1d(log_xi_he, log_A_he, fill_value='extrapolate')
     Froot_he_low = f_he(xi_low)
@@ -530,7 +530,7 @@ def R_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, xi_max):
     print("NHe = " +str(N_he)+ " cm-2")
     
 	#Li-like
-    log_xi_li, log_A_li = xi_A_values("/Users/ggrell/software/RGQ/Si_li.csv")
+    log_xi_li, log_A_li = xi_A_values(Z+"_li.csv")
     
     f_li = interpolate.interp1d(log_xi_li, log_A_li, fill_value='extrapolate')
     Froot_li_low = f_li(xi_low)
