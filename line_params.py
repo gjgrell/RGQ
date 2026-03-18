@@ -62,10 +62,9 @@ def get_ratios(Z, phi):
     yz_params = get_params_He(Z, 'yz')
     
     B = (1./3.) * (y_params[2] / (y_params[2] + yz_params)) + (5./9.) * (x_params[2] / (x_params[2] + xz_params))
-    #print(B)
-    
-    Btilde_x = (5./9.) * (x_params[2] / (x_params[2] + xz_params))    
-    Btilde_y = (1./3.) * (y_params[2] / (y_params[2] + yz_params)) 
+
+    B_x = (x_params[2] / (x_params[2] + xz_params))    
+    B_y = (y_params[2] / (y_params[2] + yz_params)) 
     
     UV_x = (phi_uv) * ((5./9.) * (x_params[2] / (x_params[2] + xz_params)))
     UV_y = (phi_uv) * ((1./3.) * (y_params[2] / (y_params[2] + yz_params)))
