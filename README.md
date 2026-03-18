@@ -24,7 +24,7 @@ The input parameters for the ratio calculations are as follows:
 - mixing factor
 - $\gamma$ - energy power law spectral index
 
-The following commands calculate the observed (global) $\mathcal{R}$ and $\mathcal{G}$ ratios averaged over entire medium factoring in the plasma geometry and observer position. Here we assume a simple, truncated cone for geometry, and a cold photoionized plasma (ne << nc, phi_UV << phi_c):
+The following commands calculate the observed (global) $\bar{\mathcal{R}}$ and $\bar{\mathcal{G}}$ ratios averaged over entire medium factoring in the plasma geometry and observer position. Here we assume a simple, truncated cone for geometry, and a cold photoionized plasma (ne << nc, phi_UV << phi_c):
 - $\bar{\mathcal{R}}$ = R_analytic_obs(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$, $\xi_{max}$)
 - $\bar{\mathcal{G}}$ = G_analytic_obs(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$, $\xi_{max}$)
 
