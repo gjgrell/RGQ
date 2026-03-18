@@ -27,13 +27,16 @@ For the observed ratio calculations, the additional parameters are:
 - $\beta$ - wind velocity coefficient 
 - $\xi_{max}$ - maximum ionization parameter 
 
-The following commands calculate the $\mathcal{R}$, $\mathcal{G}$, and $\mathcal{Q}$ ratios:
+The following commands calculate the local (unobservable) $\mathcal{R}$, $\mathcal{G}$, and $\mathcal{Q}$ ratios:
 
 - $\mathcal{R}$ = R_analytic_local(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, $\phi_{UV}$, $n_{e}$, mixing, gamma)
 - $\mathcal{G}$ = G_analytic_local(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, $\phi_{UV}$, $n_{e}$, mixing, gamma)
 - $\mathcal{Q}$ = Q_analytic(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$ $\phi_{UV}$, $n_{e}$, $\gamma$)
 
+The following commands calculate the observed (global) $\mathcal{R}$ and $\mathcal{G}$ ratios averaged over entire medium factoring in the plasma geometry and observer position. Here we assume a simple, truncated cone for geometry, and a cold photoionized plasma (ne << nc, phi_UV << phi_c):
+
 - $\bar{\mathcal{R}}$ = R_analytic_obs(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$, $\xi_{max}$)
 - $\bar{\mathcal{G}}$ = G_analytic_obs(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$, $\xi_{max}$)
 
+The following commands also calculate the observed (global) $\mathcal{R}$ ratio averaged over entire medium factoring in the plasma geometry and observer position, but with the column densities calculated as a function of radial distribution. We again assume a simple, truncated cone for geometry, and a cold photoionized plasma (ne << nc, phi_UV << phi_c):
 - $\bar{\mathcal{R}}^\prime$ = R_analytic_global(Z, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$, $\xi_{max}$)
