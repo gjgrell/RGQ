@@ -31,9 +31,9 @@ The following commands calculate the observed (global) $\bar{\mathcal{R}}$ and $
 The following commands also calculate the observed (global) $\mathcal{R}$ ratio averaged over entire medium factoring in the plasma geometry and observer position, but with the column densities calculated as a function of radial distribution. We again assume a cold photoionized plasma ($n_e$ << $n_c$, $\Phi_{z,i}$ << $\Phi_{c}$):
 - $\bar{\mathcal{R}}^\prime$ = R_analytic_global(Z, $\sigma_{v}$, mixing, $\gamma$, $\alpha$, $R_0$, R, L, $\beta$, $\xi_{max}$)
 
-For the observed ratio calculations, the additional parameters are:
+For the observed ratio calculations, the input parameters are:
 - $\alpha$ - opening angle (arcsec)
-- R0 - cone inner radius (parsecs)
+- $R_0$ - cone inner radius (parsecs)
 - R - maximum cone radius (parsecs)
 - L - luminosity ($erg$ $s^{-1}$) 
 - $\beta$ - wind velocity coefficient 
