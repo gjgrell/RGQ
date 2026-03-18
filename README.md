@@ -9,8 +9,8 @@ gunzip, and extract it.
 ## 2. Usage
 The following commands calculate the local (unobservable) $\mathcal{R}$, $\mathcal{G}$, and $\mathcal{Q}$ ratios:
 
-- $\mathcal{R}$ = R_analytic_local(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, $\phi_{UV}$, $n_{e}$, mixing, gamma)
-- $\mathcal{G}$ = G_analytic_local(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, $\phi_{UV}$, $n_{e}$, mixing, gamma)
+- $\mathcal{R}$ = R_analytic_local(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, $\phi_{UV}$, $n_{e}$, mixing, $\gamma$)
+- $\mathcal{G}$ = G_analytic_local(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$, $\phi_{UV}$, $n_{e}$, mixing, $\gamma$)
 - $\mathcal{Q}$ = Q_analytic(Z, $N_{Li}$, $N_{He}$, $\sigma_{v}$ $\phi_{UV}$, $n_{e}$, $\gamma$)
 
 The input parameters for the ratio calculations are as follows:
