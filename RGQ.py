@@ -900,9 +900,6 @@ def G_analytic_local(Z, N_li, N_he, v, pi, nele, mixing, gamma):
     Bz = 1 - B
     Upsilon = Phi_w / (A * tot_beta_He) #A * tot_beta_He / (Phi_w)
 
-    #G_new = tot_beta_He * x_i * (Btilde + (F + S + Bz) * (1 + Xtilde) / (1 + X)) / (tot_beta_He + Phi_w)
-    #G_new = (K/A) * (Upsilon / (Upsilon + 1)) * (Btilde + (F + S + Bz) * (1 + Xtilde) / (1 + X))
-
     G = ((F + S + Bz + U) * ((Azg + Xtilde) / (Azg + X)) + Btilde + Utilde) / (K + (Phi_w * K / (tot_beta_He * A)))
     return G
     
@@ -1116,7 +1113,6 @@ def G_analytic_obs(Z, N_li, N_he, v, mixing, gamma, alpha, R0, R, L, beta, ximax
     Btilde = Btilde_y + Btilde_x
     
     G = (1 + F - B + S) / (K + (I_w * Phi_w * K / (tot_beta_He * A))) + (Btilde) / (A_0 * (K + (I_w * Phi_w * K / (tot_beta_He * A))))
-    #G_new = (K/A) * (Upsilon / (Upsilon + 1)) * (1 + F + S - B * (1 - E / (tot_beta_He * A_0)))
     return G
 
 #Calculates observed (global) G ratio averaged over entire medium factoring in plasma geometry and observer position (FULL APPROX)
