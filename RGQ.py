@@ -19,6 +19,7 @@ m_p = 1.67e-24 #proton mass (grams)
 hbar = 6.582e-16 #Planck constant (eV*s)
 h = 4.135e-15 #Planck constant (eV*s)
 e2 = (hbar * c) / 137 #eV*cm
+A_si = 3.24e-5 #silicon fraction
 
 
 data_NIST = np.loadtxt('NIST_energies_qrst_wxyz.txt')
@@ -251,7 +252,7 @@ def R_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
     #He-like y emitting
     He_y_params = get_params_He(Z, 'y')
     y_centroid_energy = df.loc[Z, 'y']
-	fac_y_osc_strength = He_y_params[1]
+    fac_y_osc_strength = He_y_params[1]
     y_lorentz_gamma = He_y_params[2] * hbar #eV
 
     #Li-like s absorbing
@@ -342,7 +343,7 @@ def R_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
     n_he_high = 10**(Froot_he_high) * A_si * n0_high * (R0/r_grid)**(beta) 
     
     #Take average for He-like ion density
-	n_he = (n_he_low + n_he_high) / 2
+    n_he = (n_he_low + n_he_high) / 2
 
 	#Column density calculation (integrate ion density)
     N_he = simpson(n_he[0,0,:], r_lin, axis = 0)
@@ -592,7 +593,7 @@ def Q_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
     n_li = (n_li_low + n_li_high) / 2
 
 	#Column density (integrate ion density)
-	N_li = simpson(n_li[0,0,:], r_lin, axis = 0)
+    N_li = simpson(n_li[0,0,:], r_lin, axis = 0)
     print("NLi = " +str(N_li)+ " cm-2")
     
     #____
@@ -1095,7 +1096,7 @@ def G_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
     
     S = tot_beta_Li / (x_i * tot_beta_He)
     Upsilon = A * tot_beta_He / (Phi_w)
-
+    
     #____
     # U - term describing contribution from y photoexcitation 
     #Line profile
