@@ -21,18 +21,16 @@ h = 4.135e-15 #Planck constant (eV*s)
 e2 = (hbar * c) / 137 #eV*cm
 A_si = 3.24e-5 #silicon fraction
 
-
+#Line energies from NIST database
 data_NIST = np.loadtxt('NIST_energies_qrst_wxyz.txt')
 columns = ['Z', 'q', 'r', 's', 't', 'w','x','y','z']
 index = ["C", "N", "O", "Ne", "Mg", "Si", "S", "Ar", "Ca", "Cr", "Mn", "Fe", "Ni"]
 df = pd.DataFrame(data_NIST,index=index, columns=columns)
 
-
-#get the number for the element
+#Get atomic number for element
 def get_number(Z):
     element_num= {"C":6,"N":7,"O":8,"Ne":10,"Mg":12,"Si":14,"S":16,"Ar":18,"Ca":20,"Cr":24,"Mn":25,"Fe":26,"Ni":28}
     return element_num[Z]
-
 
 # Power law function
 def power_law(x, a, b):
@@ -44,8 +42,7 @@ def voigt(x, x0, sigma, gamma):
 
 #Calculates local (unobservable) R ratio (does not factor plasma geometry, observer position)
 def R_analytic_local(Z, N_li, N_he, v, pi, nele, mixing, gamma):
-    
-    #____
+	
     #Relevant ratios F, B, K for analytic R ratio calculation
     ratios = get_ratios(Z, pi)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
@@ -456,8 +453,7 @@ def R_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
 
 #Calculates local (unobservable) Q ratio (does not factor plasma geometry, observer position)
 def Q_analytic_local(Z, N_li, N_he, v, pi, nele, gamma):
-        
-    #____
+
     #tot_beta_He - cone-averaged total photoionization rate [s-1]
     #beta = photoionization cross sections * ionizing radiation [s -1]
     #egrid - energy range starting from K-shell PI threshold energy [eV]
@@ -668,7 +664,6 @@ def Q_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
 #Calculates local (unobservable) G ratio (does not factor plasma geometry, observer position)
 def G_analytic_local(Z, N_li, N_he, v, pi, nele, mixing, gamma):
     
-    #____
     #Relevant ratios F, B, K for analytic R ratio calculation
     ratios = get_ratios(Z, pi)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
@@ -884,7 +879,6 @@ def G_analytic_local(Z, N_li, N_he, v, pi, nele, mixing, gamma):
 #Assumming cold photoionized plasma (ne << nc, phi_UV << phi_c) 
 def G_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
     
-    #____
     #Relevant ratios F, B, K for analytic R ratio calculation
     ratios = get_ratios(Z, 0)
     F = ratios[0] #Ratio of collisional population of z / (x + y)
