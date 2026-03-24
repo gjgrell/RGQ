@@ -1096,6 +1096,19 @@ def G_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
     S = tot_beta_Li / (x_i * tot_beta_He)
     Upsilon = A * tot_beta_He / (Phi_w)
 
+    #____
+    # U - term describing contribution from y photoexcitation 
+    #Line profile
+    sigma_y = h * (np.pi * e2 / (m_e * c)) * fac_y_osc_strength * phi_y
+    tau_y = sigma_y * N_he    
+    I_y = (y_centroid_energy)**(-1 * gamma)
+    
+	#Photoexcitation rate
+    dPhi_y = (1 - np.exp(-1*tau_y))
+    Phi_y = I_y * simpson(dPhi_y, x=e_grid)
+    
+    U = (Phi_y - B_y * Phi_y) / (x_i * tot_beta_He)
+
     #_____
     #Calculate RAD-corrected total photoionization rate
     #total photoionization rate = 4 * pi * Omega * r0^2 * integral((J/E) * (sigma / sigma_tot)) * (1 - e^(-tau)) dE)
