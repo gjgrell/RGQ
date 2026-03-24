@@ -435,7 +435,7 @@ def R_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
                 P_rad_x[i,j,k] = simpson(phi_x * (1 - np.exp(-1 * tau)), e_grid, axis = 0)
     
     #Total photoionization rate (integrate over volume)
-    bar_beta_He = tot_beta_He * simpson(simpson(simpson((1 / (r_grid/R0)**(beta)) * np.sin(theta_grid) * 10**(Froot_he), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
+    bar_beta_He = simpson(simpson(simpson((1 / (r_grid/R0)**(beta)) * np.sin(theta_grid) * 10**(Froot_he), theta_lin, axis = 0), phi_lin, axis = 0), r_lin, axis = 0)
     Btilde_y = B_y * (1 - P_rad_y)
     Btilde_x = B_x * (1 - P_rad_x) 
     Btilde = (1./3.) * Btilde_y + (5./9.) * Btilde_x
@@ -448,7 +448,7 @@ def R_analytic_global(Z, v, mixing, gamma, alpha, R0, R, L, beta, ximax):
 
     Bz = 1 - B
     R0_prime = (F + S + Bz) / B
-    R = R0_prime * bar_beta_He / tilde_beta_He
+    R = R0_prime * (tot_beta_He * bar_beta_He) / tilde_beta_He
     return float(R)
 
 #Calculates local (unobservable) Q ratio (does not factor plasma geometry, observer position)
