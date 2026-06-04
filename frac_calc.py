@@ -1,47 +1,103 @@
 import numpy as np
 from scipy.optimize import brentq
+from scipy import interpolate
+from numpy.polynomial.legendre import leggauss
+from functools import partial
+
+#Constants
+A_si = 3.24e-5 #silicon fraction
 
 def xi_A_values(file):
     data = np.loadtxt(file, delimiter=',')
     log_xi = data[:,0]
     log_A = data[:,1]
 
-    xi_values = 10**(log_xi)
-    A_values = 10**(log_A)
-    
-    return xi_values, A_values
+    return log_xi, log_A
 
-def xi_r0(L, r0, n0):
-    return L / (n0 * r0**2)
 
 def xi_rmax(L, r0, r, n0, beta):
     return L / (n0 * r0**beta * r**(2-beta))
 
-def F(L, r0, r, n0, beta):
-    xi = xi_rmax(L, r0, r, n0, beta)
-    xi_values, A_values = xi_A_values("Si_he.csv")
-    return np.interp(xi, xi_values, A_values)
+
+def F_root(Z, nele, L, r0, r, beta, xi_max):
+    log_xi, log_A = xi_A_values("/Users/ggrell/software/RGQ/"+str(Z)+"_"+str(nele)+".csv")
+    
+    #Root-calculated initial number density (as a function of xi - XSTSR)
+    n0_solution = L / (xi_max * r0**(2))
+    xi = L / (n0_solution * r0**(beta) * r**(2-beta))
+    f = interpolate.interp1d(log_xi, log_A, fill_value='extrapolate')
+    Froot = f(xi)
+    return Froot
 
 
-def Fdiff(n0,L,r0,rmax,beta):
-    return F(L, r0, r0, n0, beta) - F(L, r0, rmax, n0, beta)
+def F_root_bimodal(Z, nele, mixing, L, r0, r, beta, xi_max):
+    #Root-calculated initial number density (as a function of xi - XSTSR)
+    n0_solution = L / (xi_max * r0**(2))
+    
+    #Define bimodal distribution for n0 based on mixing factor
+    n0_low = (2 * n0_solution) / (1 + 1 / (1 - mixing)) 
+    n0_high = n0_low / (1 - mixing)
+    
+    #Calculate xi for low, high modes
+    xi_low = L / (n0_low * r0**(beta) * r**(2-beta))
+    xi_high = L / (n0_high * r0**(beta) * r**(2-beta))    
+    
+    log_xi, log_A = xi_A_values("/Users/ggrell/software/RGQ/"+str(Z)+"_"+str(nele)+".csv")
+    
+    f = interpolate.interp1d(log_xi, log_A, fill_value='extrapolate')
+    Froot_low = f(xi_low)
+    Froot_high = f(xi_high)
+    Froot_high_log = 10**(Froot_high)
+    Froot_low_log = 10**(Froot_low)
+
+    Froot = (Froot_low_log + Froot_high_log) / 2
+    return Froot
 
 
-def find_min_max_x(n0_scan,L,r0,rmax,beta):
-    values = [Fdiff(n,L,r0,rmax,beta) for n in n0_scan]
+def get_n(r, Z, nele, mixing, L, r0, beta, xi_max):
+    
+    #Root-calculated initial number density (as a function of xi - XSTSR)
+    n0_solution = L / (xi_max * r0**(2))
+    
+    #Define bimodal distribution for n0 based on mixing factor
+    n0_low = (2 * n0_solution) / (1 + 1 / (1 - mixing)) 
+    n0_high = n0_low / (1 - mixing)
+    
+    #Calculate xi for low, high modes
+    xi_low = L / (n0_low * r0**(beta) * r**(2-beta))
+    xi_high = L / (n0_high * r0**(beta) * r**(2-beta))    
+    
+    log_xi, log_A = xi_A_values("/Users/ggrell/software/RGQ/"+str(Z)+"_"+str(nele)+".csv")
+    
+    f = interpolate.interp1d(log_xi, log_A, fill_value='extrapolate')
+    Froot_low = f(xi_low)
+    Froot_high = f(xi_high)
+    Froot_high_log = 10**(Froot_high)
+    Froot_low_log = 10**(Froot_low)
 
-    min_index = min(range(len(values)), key=lambda i: values[i])
-    max_index = max(range(len(values)), key=lambda i: values[i])
+    Froot = (Froot_low_log + Froot_high_log) / 2
+    
+    #Column density approximation model
+    n_low = 10**(Froot_low) * A_si * n0_low * (r0/r)**(beta) 
+    n_high = 10**(Froot_high) * A_si * n0_high * (r0/r)**(beta) 
+        
+    #Take average for He-like ion density
+    n = (n_low + n_high) / 2
+    return n
+    
 
-    return min_index, max_index, values[min_index], values[max_index]
+def smax_cone(r0,theta0,phi0,i,alpha):
+    mu = (np.sin(theta0)*np.cos(phi0)*np.cos(i)+np.cos(theta0)*np.sin(i))
+    A = np.sin(i)**2 - np.cos(alpha)**2
+    B = 2.0*r0*(np.cos(theta0)*np.sin(i)-np.cos(alpha)**2*mu)
+    C = r0**2 * (np.cos(theta0)**2 - np.cos(alpha)**2)
+    disc = B**2 - 4.0*A*C
+    return (-B-np.sqrt(disc))/(2.0*A),mu
 
-def F_n0_root(L, r, r0, rmax, beta):
-
-    n0_scan = np.logspace(-5, 5, 1000)
-
-    n0_lower = n0_scan[find_min_max_x(n0_scan,L,r0,rmax,beta)[0]]
-    n0_upper = n0_scan[find_min_max_x(n0_scan,L,r0,rmax,beta)[1]]
-
-    n0_solution = brentq(Fdiff,n0_lower,n0_upper,args=(L,r0,rmax,beta))
-
-    return F(L,r0, r, n0_solution,beta)
+NQUAD=32
+GL_X,GL_W = leggauss(NQUAD)
+def obs_tau(r0,theta0,phi0,i,alpha,sigma,n_r):
+    smax,mu = smax_cone(r0,theta0,phi0,i,alpha)
+    s = 0.5*smax*(GL_X+1.0)
+    r = np.sqrt(r0*r0+2.0*r0*mu*s + s**2)
+    return 0.5*smax*np.sum(GL_W*n_r(r))*sigma
