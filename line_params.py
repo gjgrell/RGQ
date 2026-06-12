@@ -1,15 +1,18 @@
 import sys
 import numpy as np
 
+#Function reads FAC CRM line intensities to calculate the following atomic parameters: 
+#F, B, Btilde_x, Btilde_y, UV_x, UV_y, K, R0
+
 def get_ratios(Z, phi):
 
-    F = 0
-    B = 0
-    Btilde_x = 0
-    Btilde_y = 0
-    K = 0
-    R0 = 0
-    phi_uv = phi
+    F = 0 #Ratio of collisional population of z / (x + y)
+    B = 0 #Effective branching ratio of upper levels of x,y to ground
+    Btilde_x = 0 #Branching ratio for x to multiply by escape probability
+    Btilde_y = 0 #Branching ratio for y to multiply by escape probability
+    K = 0 #Ratio of radiative recombination rates of w / (x + y)
+    R0 = 0 #FAC-calculated z / (x + y) in absence of 2s-2p UV photoexcitation rate
+    phi_uv = phi # UV photoexcitation rate [s-1]
     
     zline = 0
     xline = 0
@@ -55,14 +58,18 @@ def get_ratios(Z, phi):
             if (line_dat[0] ==2 and line_dat[1]==1 and line_dat[2]==3):
                 y_to_zline = line_dat[6]
                 
-    x_params = get_params_He(Z, 'x')
+    x_params = get_params_He(Z, 'x') 
     y_params = get_params_He(Z, 'y')
     
     xz_params = get_params_He(Z, 'xz')
     yz_params = get_params_He(Z, 'yz')
     
     B = (1./3.) * (y_params[2] / (y_params[2] + yz_params)) + (5./9.) * (x_params[2] / (x_params[2] + xz_params))
-
+    #print(B)
+    
+    #B_x = (5./9.) * (x_params[2] / (x_params[2] + xz_params))    
+    #B_y = (1./3.) * (y_params[2] / (y_params[2] + yz_params)) 
+    
     B_x = (x_params[2] / (x_params[2] + xz_params))    
     B_y = (y_params[2] / (y_params[2] + yz_params)) 
     
@@ -73,9 +80,10 @@ def get_ratios(Z, phi):
     F = (zline * B / (xline + yline)) - 1 + B    
     K = B * wline / (xline + yline)
     
-    return F, B, Btilde_x, Btilde_y, UV_x, UV_y, K, R0
+    return F, B, B_x, B_y, UV_x, UV_y, K, R0
 
-
+#Function reads FAC .tr file for chosen He-like ion Z and returns line energy, oscillator strength, 
+#and decay rate
 def get_params_He(Z, ln):
     w_E = 0
     w_osc = 0
@@ -155,7 +163,10 @@ def get_params_He(Z, ln):
         return xz_A
     if ln == 'yz':
         return yz_A
-        
+     
+
+#Function reads FAC .tr file for chosen Li-like ion Z and returns line energy, oscillator strength, 
+#and decay rate   
 def get_params_Li(Z,ln):
     q_E = 0
     q_osc = 0
@@ -220,7 +231,9 @@ def get_params_Li(Z,ln):
         return s_E, s_osc, s_A
     if ln == 't':
         return t_E, t_osc, t_A
-        
+    
+    
+#Function returns autoionization rates for chosen Li-like ion Z    
 def get_ai_rates(Z, ln):
     q_ai = 0
     r_ai = 0
@@ -263,6 +276,7 @@ def get_ai_rates(Z, ln):
     if ln == 't':
         return t_ai
         
+#Returns collisional rate coefficients from z -> x,y for chosen element Z
 def get_rates(Z):
 
     c_xz = 0
