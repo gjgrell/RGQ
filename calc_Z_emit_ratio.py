@@ -12,8 +12,8 @@ def get_q_r_w_ratio(Z):
     NLI_space = np.logspace(12,20,nli_len)
     NHE_space = np.logspace(15,20,nhe_len)
     vel_space = np.linspace(50,400,v_len)
-    if(os.path.exists("q_r_w_ratio_"+str(Z)+".npy")):
-        q_r_w_ratio = np.load("q_r_w_ratio_"+str(Z)+".npy")
+    if(os.path.exists("Q_calc/q_r_w_ratio_"+str(Z)+".npy")):
+        q_r_w_ratio = np.load("Q_calc/q_r_w_ratio_"+str(Z)+".npy")
     else:
         q_r_w_ratio = np.zeros((nli_len,nhe_len,v_len))
         for Nli in NLI_space:
