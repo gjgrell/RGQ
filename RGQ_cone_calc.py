@@ -366,8 +366,17 @@ def Q_analytic_global_cone(Z, v, mixing, gamma, theta_inner, theta_outer, inner_
     
     #Pi
     NLI_space,NHE_space,vel_space,qrw_ratio = get_q_r_w_ratio(get_number(Z))
+    if (N_li < np.min(NLI_space)):
+    	N_li = np.min(NLI_space)
     
-    ##### FIX ######
+    if (N_li > np.max(NLI_space)):
+    	N_li = np.max(NLI_space)
+    	
+    if (N_he < np.min(NHE_space)):
+    	N_he = np.min(NHE_space)
+    
+    if (N_he > np.max(NHE_space)):
+    	N_he = np.max(NHE_space)
     Pi = interpn((NLI_space,NHE_space,vel_space),qrw_ratio,[N_li,N_he,v])[0]
 	
     #____
