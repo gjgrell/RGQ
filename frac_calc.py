@@ -5,7 +5,18 @@ from numpy.polynomial.legendre import leggauss
 from functools import partial
 
 #Constants
-A_si = 3.24e-5 #silicon fraction
+A_Si = 3.24e-5 #silicon fraction
+A_Mg = 3.98e-5 #magnesium fraction
+A_S = 	1.32e-5 #sulfur
+
+
+def get_A_fraction(Z):
+    fractions = {
+        "Si": A_Si,
+        "Mg": A_Mg,
+        "S": A_S
+    }
+    return fractions.get(Z)
 
 def xi_A_values(file):
     data = np.loadtxt(file, delimiter=',')
@@ -20,7 +31,7 @@ def xi_rmax(L, r0, r, n0, beta):
 
 
 def F_root(Z, nele, L, r0, r, beta, xi_max):
-    log_xi, log_A = xi_A_values("/Users/ggrell/software/RGQ/"+str(Z)+"_"+str(nele)+".csv")
+    log_xi, log_A = xi_A_values("xi_calc/"+str(Z)+"_"+str(nele)+".csv")
     
     #Root-calculated initial number density (as a function of xi - XSTSR)
     n0_solution = L / (xi_max * r0**(2))
@@ -42,7 +53,7 @@ def F_root_bimodal(Z, nele, mixing, L, r0, r, beta, xi_max):
     xi_low = L / (n0_low * r0**(beta) * r**(2-beta))
     xi_high = L / (n0_high * r0**(beta) * r**(2-beta))    
     
-    log_xi, log_A = xi_A_values("/Users/ggrell/software/RGQ/"+str(Z)+"_"+str(nele)+".csv")
+    log_xi, log_A = xi_A_values("xi_calc/"+str(Z)+"_"+str(nele)+".csv")
     
     f = interpolate.interp1d(log_xi, log_A, fill_value='extrapolate')
     Froot_low = f(xi_low)
@@ -67,7 +78,7 @@ def get_n(r, Z, nele, mixing, L, r0, beta, xi_max):
     xi_low = L / (n0_low * r0**(beta) * r**(2-beta))
     xi_high = L / (n0_high * r0**(beta) * r**(2-beta))    
     
-    log_xi, log_A = xi_A_values("/Users/ggrell/software/RGQ/"+str(Z)+"_"+str(nele)+".csv")
+    log_xi, log_A = xi_A_values("xi_calc/"+str(Z)+"_"+str(nele)+".csv")
     
     f = interpolate.interp1d(log_xi, log_A, fill_value='extrapolate')
     Froot_low = f(xi_low)
@@ -78,8 +89,8 @@ def get_n(r, Z, nele, mixing, L, r0, beta, xi_max):
     Froot = (Froot_low_log + Froot_high_log) / 2
     
     #Column density approximation model
-    n_low = 10**(Froot_low) * A_si * n0_low * (r0/r)**(beta) 
-    n_high = 10**(Froot_high) * A_si * n0_high * (r0/r)**(beta) 
+    n_low = 10**(Froot_low) * get_A_fraction(Z) * n0_low * (r0/r)**(beta) 
+    n_high = 10**(Froot_high) * get_A_fraction(Z) * n0_high * (r0/r)**(beta) 
         
     #Take average for He-like ion density
     n = (n_low + n_high) / 2
