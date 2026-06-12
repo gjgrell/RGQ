@@ -10,7 +10,6 @@ from scipy.optimize import minimize
 from calc_Z_emit_ratio import *
 from line_params import *
 from frac_calc import *
-from code import interact
 from numpy.polynomial.legendre import leggauss
 from functools import partial
 
